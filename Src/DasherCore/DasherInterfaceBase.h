@@ -544,7 +544,6 @@ protected:
 
   void CreateInputFilter();
 
-  void CreateModel(int iOffset);
   void CreateNCManager();
 
   void ChangeAlphabet();
