@@ -364,8 +364,6 @@ public:
   void SetDefaultInputDevice(CDasherInput *);
   void SetDefaultInputMethod(CInputFilter *);
 
-  void StartShutdown();
-
   void ScheduleRedraw() {
     m_bRedrawScheduled = true;
   };
