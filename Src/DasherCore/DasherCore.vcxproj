@@ -249,7 +249,6 @@
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="NodeCreationManager.h" />
-    <ClInclude Include="NodeQueue.h" />
     <ClInclude Include="OneButtonDynamicFilter.h" />
     <ClInclude Include="OneButtonFilter.h" />
     <ClInclude Include="OneDimensionalFilter.h" />
