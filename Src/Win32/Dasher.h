@@ -74,7 +74,6 @@ public:
 private:
   virtual void CreateModules() override;
 
-  void ScanDirectory(const Tstring &strMask, std::vector<std::string> &vFileList);
   bool                    GetWindowSize(int* pTop, int* pLeft, int* pBottom, int* pRight);
   void                    Log();                        // Does the logging
 
