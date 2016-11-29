@@ -102,8 +102,6 @@ class CCanvas : public ATL::CWindowImpl<CCanvas> {
   HWND getwindow() {
     return m_hWnd;
   } 
-  
-  int OnTimer();
 
   bool GetCanvasSize(int& pTop, int& pLeft, int& pBottom, int& pRight);
 
