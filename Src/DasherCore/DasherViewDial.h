@@ -2,8 +2,8 @@
 //
 // Copyright (c) 2001-2004 David Ward
 
-#ifndef __DasherViewSquare_h__
-#define __DasherViewSquare_h__
+#ifndef __DasherViewDial_h__
+#define __DasherViewDial_h__
 #include "DasherView.h"
 #include "DasherScreen.h"
 #include <deque>
@@ -13,7 +13,7 @@
 using namespace std;
 
 namespace Dasher {
-  class CDasherViewSquare;
+  class CDasherViewDial;
   class CDasherView;
   class CDasherModel;
   class CDasherNode;
@@ -29,7 +29,7 @@ namespace Dasher {
 ///
 /// Horizontal mapping - linear and log
 /// Vertical mapping - linear with different gradient
-class Dasher::CDasherViewSquare : public Dasher::CDasherView, public CSettingsUserObserver
+class Dasher::CDasherViewDial : public Dasher::CDasherView, public CSettingsUserObserver
 {
 public:
 
@@ -40,8 +40,8 @@ public:
   /// passed as parameter to the drawing functions, and data structure
   /// can be extracted from the model and passed too.
 
-  CDasherViewSquare(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient);
-  ~CDasherViewSquare();
+  CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient);
+  ~CDasherViewDial();
 
   ///
   /// Event handler
@@ -115,7 +115,7 @@ private:
   void Quadric(myint Range, myint lowY, myint highY, int fillColor, int outlineColour, int lineWidth);
 
   class CTextString {
-  public: //to CDasherViewSquare...
+  public: //to CDasherViewDial...
     ///Creates a request that label will be drawn.
     /// x,y are screen coords of midpoint of leading edge;
     /// iSize is desired size (already computed from requested position)
@@ -201,6 +201,6 @@ private:
   myint m_iDasherMaxY;
 };
 /// @}
-#include "DasherViewSquare.inl"
+#include "DasherViewDial.inl"
 
-#endif /* #ifndef __DasherViewSquare_h__ */
+#endif /* #ifndef __DasherViewDial_h__ */

@@ -23,6 +23,7 @@
 #include "DasherInterfaceBase.h"
 
 #include "DasherViewSquare.h"
+#include "DasherViewDial.h"
 #include "ControlManager.h"
 #include "DasherScreen.h"
 #include "DasherView.h"
@@ -661,7 +662,7 @@ void CDasherInterfaceBase::ScreenResized(CDasherScreen *pScreen) {
 
 void CDasherInterfaceBase::ChangeView() {
   if(m_DasherScreen != 0 /*&& m_pDasherModel != 0*/) {
-    CDasherView *pNewView = new CDasherViewSquare(this, m_DasherScreen, ComputeOrientation());
+    CDasherView *pNewView = new CDasherViewDial(this, m_DasherScreen, ComputeOrientation());
     //the previous sends an event to all listeners registered with it, but there aren't any atm!
     // so send an event to tell them of the new view object _and_ get them to recompute coords:  
     if (m_pDasherView) m_pDasherView->TransferObserversTo(pNewView);
