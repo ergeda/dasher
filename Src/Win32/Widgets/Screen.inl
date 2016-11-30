@@ -53,6 +53,21 @@ inline void CScreen::DrawCircle(screenint iCX, screenint iCY, screenint iR, int 
   SelectObject(m_hDCBuffer, hpOld);
 }
 
+inline void CScreen::DrawArc(screenint iCX, screenint iCY, screenint iR, double dStartAngle, double dSweepAngle, int iFillColour, int iLineColour, int iLineWidth) {
+    HGDIOBJ hpOld = (HPEN)SelectObject(m_hDCBuffer, GetPen(iLineColour, iLineWidth));
+    HBRUSH hBrushOld = (HBRUSH)SelectObject(m_hDCBuffer, CScreen::GetBrush(iFillColour));
+
+    BeginPath(m_hDCBuffer);
+    MoveToEx(m_hDCBuffer, iCX, iCY, (LPPOINT)NULL);
+    AngleArc(m_hDCBuffer, iCX, iCY, iR, dStartAngle, dSweepAngle);
+    LineTo(m_hDCBuffer, iCX, iCY);
+    EndPath(m_hDCBuffer);
+    StrokeAndFillPath(m_hDCBuffer);
+    
+    SelectObject(m_hDCBuffer, hBrushOld);
+    SelectObject(m_hDCBuffer, hpOld);
+}
+
 inline void CScreen::Polyline(point *Points, int Number, int iWidth, int iColour) {
   HGDIOBJ hpOld;
   hpOld = (HPEN) SelectObject(m_hDCBuffer, GetPen(iColour, iWidth));

@@ -37,14 +37,12 @@ public:
   /// \todo Don't cache screen and model locally - screen can be
   /// passed as parameter to the drawing functions, and data structure
   /// can be extracted from the model and passed too.
-
   CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient);
   ~CDasherViewDial();
 
   ///
   /// Event handler
   ///
-
   virtual void HandleEvent(int iParameter);
 
   //Override to additionally reset scale factors etc.
@@ -114,15 +112,13 @@ private:
   std::vector<CTextString *> m_DelayedTexts;
 
   void DoDelayedText(CTextString *pText);
+
   ///
   /// Draw text specified in Dasher co-ordinates
   ///
-
   CTextString *DasherDrawText(myint iMaxX, myint iMidY, CDasherScreen::Label *pLabel, CTextString *pParent, int iColor);
 
   /// (Recursively) render a node and all contained subnodes, in overlapping shapes
-  /// (according to LP_SHAPE_TYPE: 1=rects, 2=triangles, 3=truncated triangles,
-  /// 4=quadrics, 5=semicircles)
   /// Each call responsible for rendering exactly the area contained within the node.
   /// @param pOutput The innermost node covering the crosshair (if any)
   void NewRender(CDasherNode * Render, myint y1, myint y2, CTextString *prevText, CExpansionPolicy &policy, double dMaxCost, CDasherNode *&pOutput);

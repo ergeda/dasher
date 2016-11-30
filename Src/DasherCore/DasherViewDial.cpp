@@ -93,19 +93,76 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
 
     m_iRenderCount = 0;
 
+    screenint width = Screen()->GetWidth();
+    screenint height = Screen()->GetHeight();
+    Screen()->DrawRectangle(0, 0, width, height, 0, -1, 0);
+
+    // render dial
+    screenint origin_x = width / 2;
+    screenint origin_y = height / 2;
+    
+    // current index;
+    int index = 7;
+
+    // Level-0
     CDasherNode *pOutput = pRoot->Parent();
-    //overlapping rects/shapes
-    if (pOutput) {
-        //LEFT of Y axis, would be entirely covered by the root node parent (before we render root)
-        // (getColour() gives the right colour, even if pOutput is invisible - in that case it gives
-        // the colour of its parent)
-        DasherDrawRectangle(iDasherMaxX, iDasherMinY, 0, iDasherMaxY, pOutput->getColour(), -1, 0);
-        //RIGHT of Y axis, should be white.
-        DasherDrawRectangle(0, iDasherMinY, iDasherMinX, iDasherMaxY, 0, -1, 0);
+    if (pRoot->ChildCount() == 0) {
+        policy.ExpandNode(pRoot);
     }
-    else //easy case, whole screen is white (outside root node, e.g. when starting)
-        Screen()->DrawRectangle(0, 0, Screen()->GetWidth(), Screen()->GetHeight(), 0, -1, 0);
-    NewRender(pRoot, iRootMin, iRootMax, NULL, policy, std::numeric_limits<double>::infinity(), pOutput);
+    // Level-1
+    CDasherNode *pLevel1 = pRoot->GetChildren()[index];
+    if (pLevel1->ChildCount() == 0) {
+        policy.ExpandNode(pLevel1);
+    }
+    // Level-2 (expand level-1's most probable child)
+    CDasherNode *pLevel2 = pRoot->GetChildren()[0];
+    CDasherNode::ChildMap::const_iterator I, E = pLevel1->GetChildren().end();
+    for (I = pLevel1->GetChildren().begin(); I != E; ++I) {
+        CDasherNode *pChild = *I;
+        if (pChild->Range() > pLevel2->Range()) pLevel2 = *I;
+    }
+    if (pLevel2->ChildCount() == 0) {
+        policy.ExpandNode(pLevel2);
+    }
+    // Level-2 ring
+    E = pLevel2->GetChildren().end();
+    int count = 2;
+    for (I = pLevel2->GetChildren().begin(); I != E; ++I) {
+        CDasherNode *pChild = *I;
+        double startAngle = pChild->Lbnd() * 360.0 / CDasherModel::NORMALIZATION;
+        double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
+        Screen()->DrawArc(origin_x, origin_y, 280, startAngle, sweepAngle, count++, 1, 2);
+    }
+
+    // Level-1 ring
+    E = pLevel1->GetChildren().end();
+    count = 2;
+    for (I = pLevel1->GetChildren().begin(); I != E; ++I) {
+        CDasherNode *pChild = *I;
+        double startAngle = pChild->Lbnd() * 360.0 / CDasherModel::NORMALIZATION;
+        double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
+        Screen()->DrawArc(origin_x, origin_y, 240, startAngle, sweepAngle, count++, 1, 2);
+    }
+
+    // Inner-most (level-0) ring
+    E = pRoot->GetChildren().end();
+    count = 2;
+    for (I = pRoot->GetChildren().begin(); I != E; ++I) {
+        CDasherNode *pChild = *I;
+        double startAngle = pChild->Lbnd() * 360.0 / CDasherModel::NORMALIZATION;
+        double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
+        Screen()->DrawArc(origin_x, origin_y, 200, startAngle, sweepAngle, count++, 1, 2);
+    }
+    Screen()->DrawCircle(origin_x, origin_y, 200 - 40, 0, 1, 2);
+    // Index
+    CDasherScreen::point p[4];
+    p[0].x = origin_x + 200 - 40; p[0].y = origin_y;
+    p[1].x = origin_x + 200 - 40 - 25; p[1].y = origin_y - 12;
+    p[2].x = origin_x + 200 - 40 - 25; p[2].y = origin_y + 12;
+    p[3].x = origin_x + 200 - 40; p[3].y = origin_y;
+    Screen()->Polygon(p, 4, 1, 1, 2);
+
+    //NewRender(pRoot, iRootMin, iRootMax, NULL, policy, std::numeric_limits<double>::infinity(), pOutput);
 
     // Labels are drawn in a second parse to get the overlapping right
     for (vector<CTextString *>::iterator it=m_DelayedTexts.begin(), E=m_DelayedTexts.end(); it!=E; it++)
@@ -113,7 +170,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     m_DelayedTexts.clear();
 
     // Finally decorate the view
-    Crosshair();
+    //Crosshair();
     return pOutput;
 }
 
@@ -332,8 +389,7 @@ beginning:
     //if child still covers screen, render _just_ it and return
     myint newy1 = y1 + (Range * pChild->Lbnd()) / CDasherModel::NORMALIZATION;
     myint newy2 = y1 + (Range * pChild->Hbnd()) / CDasherModel::NORMALIZATION;
-    if (
-	    (newy1 < iDasherMinY && newy2 > iDasherMaxY)) { //covers entire y-axis!
+    if (newy1 < iDasherMinY && newy2 > iDasherMaxY) { //covers entire y-axis!
          //render just that child; nothing more to do for this node => tail call to beginning
          pRender = pChild; y1=newy1; y2=newy2;
          goto beginning;
@@ -342,22 +398,18 @@ beginning:
   }
 
   //ok, need to render all children...
-  myint newy1=y1,newy2;
+  myint newy1=y1, newy2;
   CDasherNode::ChildMap::const_iterator I = pRender->GetChildren().begin(), E = pRender->GetChildren().end();
   while (I!=E) {
     CDasherNode *pChild(*I);
 
     newy2 = y1 + (Range * pChild->Hbnd()) / CDasherModel::NORMALIZATION;
-    if (pChild->GetFlag(NF_GAME)) {
-      CGameNodeDrawEvent evt(pChild, newy1, newy2);
-      Observable<CGameNodeDrawEvent*>::DispatchEvent(&evt);
-    }
     if (newy1<=iDasherMaxY && newy2 >= iDasherMinY) { //onscreen
       if (newy2-newy1 > GetLongParameter(LP_MIN_NODE_SIZE)) {
         //definitely big enough to render.
         NewRender(pChild, newy1, newy2, pPrevText, policy, dMaxCost, pOutput);
       } else if (!pChild->GetFlag(NF_SEEN)) pChild->Delete_children();
-      if (newy2>iDasherMaxY && !pRender->GetFlag(NF_GAME)) {
+      if (newy2 > iDasherMaxY) {
         //remaining children offscreen and no game-mode child we might skip
         // (among the remainder, or any previous off the top of the screen)
         if (newy1 < iDasherMinY) pRender->onlyChildRendered = pChild; //previous children also offscreen!
@@ -378,11 +430,8 @@ beginning:
 /// include the nonlinear mapping for eyetracking mode etc - it is
 /// just the inverse of the mapping used to calculate the screen
 /// positions of boxes etc.
-
 void CDasherViewDial::Screen2Dasher(screenint iInputX, screenint iInputY, myint &iDasherX, myint &iDasherY) {
-
   // Things we're likely to need:
-
   screenint iScreenWidth = Screen()->GetWidth();
   screenint iScreenHeight = Screen()->GetHeight();
 
@@ -409,14 +458,13 @@ void CDasherViewDial::Screen2Dasher(screenint iInputX, screenint iInputY, myint 
 
   iDasherX = ixmap(iDasherX);
   iDasherY = iymap(iDasherY);
-
 }
 
 void CDasherViewDial::SetScaleFactor( void )
 {
   //Parameters for X non-linearity.
   // Set some defaults here, in case we change(d) them later...
-  m_iXlogThres=CDasherModel::MAX_Y/2; //threshold: DasherX's less than this are linear; those greater are logarithmic
+  m_iXlogThres = CDasherModel::MAX_Y/2; //threshold: DasherX's less than this are linear; those greater are logarithmic
 
   //set log scaling coefficient (unused if LP_NONLINEAR_X==0)
   // note previous value = 1/0.2, i.e. a value of LP_NONLINEAR_X =~= 4.8
@@ -431,7 +479,6 @@ void CDasherViewDial::SetScaleFactor( void )
   double dScaleFactorY(dPixelsY / CDasherModel::MAX_Y );
   double dScaleFactorX(dPixelsX / static_cast<double>(CDasherModel::MAX_Y + iMarginWidth) );
 
-  //old style
   if (dScaleFactorX < dScaleFactorY) {
       //fewer (pixels per dasher coord) in X direction - i.e., X is more compressed.
       //So, use X scale for Y too...except first, we'll _try_ to reduce the difference
@@ -507,26 +554,20 @@ inline myint CDasherViewDial::CustomIDivScaleFactor(myint iNumerator) {
     res = quot;
 
   return res;
-
-  // return (iNumerator + iDenominator - 1) / iDenominator;
 }
 
 void CDasherViewDial::Dasher2Screen(myint iDasherX, myint iDasherY, screenint &iScreenX, screenint &iScreenY) {
-
   // Apply the nonlinearities
-
   iDasherX = xmap(iDasherX);
   iDasherY = ymap(iDasherY);
 
   // Things we're likely to need:
-
   screenint iScreenWidth = Screen()->GetWidth();
   screenint iScreenHeight = Screen()->GetHeight();
 
   // Note that integer division is rounded *away* from zero here to
   // ensure that this really is the inverse of the map the other way
   // around.
-
   switch( GetOrientation() ) {
   case Dasher::Opts::LeftToRight:
     iScreenX = screenint(iScreenWidth -

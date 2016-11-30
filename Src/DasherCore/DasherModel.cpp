@@ -511,8 +511,6 @@ void CDasherModel::RenderToView(CDasherView *pView, CExpansionPolicy &policy) {
   // youngest node with NF_GAME set. The model is responsible for setting NF_GAME on
   // the appropriate Nodes.
   CDasherNode *pOutput = pView->Render(m_Root, m_Rootmin + m_iDisplayOffset, m_Rootmax + m_iDisplayOffset, policy);
-
-
   OutputTo(pOutput);
 
   while (CDasherNode *pNewRoot = m_Root->onlyChildRendered) {

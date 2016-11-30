@@ -5,7 +5,6 @@
 namespace Dasher {
 
   /// Draw the crosshair
-
   inline void CDasherViewDial::Crosshair() {
     myint iDasherMinX;
     myint iDasherMinY;
