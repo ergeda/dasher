@@ -1,6 +1,4 @@
 // DasherViewSquare.h
-//
-// Copyright (c) 2001-2004 David Ward
 
 #ifndef __DasherViewDial_h__
 #define __DasherViewDial_h__
@@ -94,26 +92,9 @@ public:
 
   /// @}
 
-  void DasherSpaceArc(myint cy, myint r, myint x1, myint y1, myint x2, myint y2, int colour, int iLineWidth);
+  void DasherSpaceArc(myint cy, myint r, myint x1, myint y1, myint x2, myint y2, int colour, int iLineWidth) {}
   
 private:
-  ///draw a possibly-truncated triangle given dasher-space coords & accounting for non-linearity
-  /// @param x = max dasher-x extent
-  /// @param y1, y2 = dasher-y extent along y-axis
-  /// @param midy1,midy2 = extent along line of max x (midy1==midy2 => triangle, midy1<midy2 => truncated tri)
-  void TruncateTri(myint x, myint y1, myint y2, myint midy1, myint midy2, int fillColor, int outlineColor, int lineWidth);
-
-  /// compute screen coords for a circle, centered on y-axis, between two points
-  /// cy, r - dasher coords of center (on y-axis), radius
-  /// x1,y1 - one end-point of arc (dasher coords)
-  /// x2,y2 - other end-point (dasher-coords)
-  /// dest - point (x2,y2) in screen coords
-  /// pts - vector into which to store points; on entry, last element should already be screen-coords of (x1,y1)
-  /// dXMul - multiply x coords (in dasher space) by this (i.e. aspect ratio), for ovals
-  void CircleTo(myint cy, myint r, myint y1, myint x1, myint y3, myint x3, CDasherScreen::point dest, vector<CDasherScreen::point> &pts, double dXMul);
-  void Circle(myint Range, myint lowY, myint highY, int fCol, int oCol, int lWidth);
-  void Quadric(myint Range, myint lowY, myint highY, int fillColor, int outlineColour, int lineWidth);
-
   class CTextString {
   public: //to CDasherViewDial...
     ///Creates a request that label will be drawn.
@@ -138,13 +119,6 @@ private:
   ///
 
   CTextString *DasherDrawText(myint iMaxX, myint iMidY, CDasherScreen::Label *pLabel, CTextString *pParent, int iColor);
-
-  ///
-  /// (Recursively) render a node and all contained subnodes, in disjoint rects.
-  /// (i.e. appropriate for LP_SHAPE_TYPE==0). Each call responsible for rendering
-  /// exactly the area contained within the node.
-  /// @param pOutput The innermost node covering the crosshair (if any)
-  void DisjointRender(CDasherNode * Render, myint y1, myint y2, CTextString *prevText, CExpansionPolicy &policy, double dMaxCost, CDasherNode *&pOutput);
 
   /// (Recursively) render a node and all contained subnodes, in overlapping shapes
   /// (according to LP_SHAPE_TYPE: 1=rects, 2=triangles, 3=truncated triangles,
