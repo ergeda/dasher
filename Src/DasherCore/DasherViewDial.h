@@ -4,6 +4,7 @@
 #define __DasherViewDial_h__
 #include "DasherView.h"
 #include "DasherScreen.h"
+#include "DasherInput.h"
 #include <deque>
 #include "Alphabet/GroupInfo.h"
 #include "SettingsStore.h"
@@ -15,6 +16,7 @@ namespace Dasher {
   class CDasherView;
   class CDasherModel;
   class CDasherNode;
+  class CDasherInput;
 }
 
 /// \ingroup View

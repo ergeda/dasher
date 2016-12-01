@@ -8,6 +8,7 @@
 namespace Dasher {
   class CDasherView;
   class CDasherNode;
+  class CDasherInput;
 }
 
 #include "DasherTypes.h"
@@ -58,6 +59,9 @@ public:
 
   virtual ~CDasherView() {
   }
+
+  void SetInput(CDasherInput *pInput) { m_pInput = pInput; }
+  CDasherInput* Input() { return m_pInput; }
 
   virtual void SetOrientation(Opts::ScreenOrientations newOrient) {m_Orientation=newOrient;}
   Opts::ScreenOrientations GetOrientation() {return m_Orientation;}
@@ -198,6 +202,7 @@ protected:
 private:
   Opts::ScreenOrientations m_Orientation;
   CDasherScreen *m_pScreen;    // provides the graphics (text, lines, rectangles):
+  CDasherInput *m_pInput;
 };
 /// @}
 

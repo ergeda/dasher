@@ -161,6 +161,10 @@ void CDasherInterfaceBase::Realize(unsigned long ulTime) {
 
   CreateInput();
   CreateInputFilter();
+
+  // set input to view
+  m_pDasherView->SetInput(m_pInput);
+
   //we may have created a control manager already; in which case, we need
   // it to realize there's now an inputfilter (which may provide more actions).
   // So tell it the setting has changed...
@@ -521,8 +525,8 @@ void CDasherInterfaceBase::NewFrame(unsigned long iTime, bool bForceRedraw) {
       //If we've been told to render another frame via ScheduleRedraw,
       // that's the same as passing in true to NewFrame.
       if (m_bRedrawScheduled) bForceRedraw=true;
-      m_bRedrawScheduled=false;
-
+      m_bRedrawScheduled=true;
+#if 0 // crash, so comment out
       //Apply any movement that has been scheduled
       if (m_pDasherModel->NextScheduledStep()) {
         //yes, we moved...
@@ -536,6 +540,7 @@ void CDasherInterfaceBase::NewFrame(unsigned long iTime, bool bForceRedraw) {
         if (m_bLastMoved) bForceRedraw=true;//move into onPause() method if reqd
         m_bLastMoved=false;
       }
+#endif
       //2. Render nodes decorations, messages
       bBlit = Redraw(iTime, bForceRedraw, *pol);
 

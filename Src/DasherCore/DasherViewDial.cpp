@@ -102,6 +102,10 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     const double PI = 3.141592654;
     
     // TODO: dicide pointer_index by mouse coordinate
+    screenint mouse_x, mouse_y;
+    Input()->GetScreenCoords(mouse_x, mouse_y, this);
+    double startAngle_offset = atan((mouse_y - origin_y) * -1.0 / (mouse_x - origin_x)) * 180.0 / PI;
+
     int pointer_index = 7;
 
     // Level-0
@@ -162,7 +166,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     offset = CDasherModel::NORMALIZATION -(pLevel1->Lbnd() + pLevel1->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
         Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, 1, 2);
         // render text label
