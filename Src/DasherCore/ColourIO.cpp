@@ -59,19 +59,29 @@ void CColourIO::CreateDefault() {
   Default.ColourID = "Default";
   Default.Mutable = false;
 
+  // white
   Default.Reds.push_back(255);
   Default.Greens.push_back(255);
   Default.Blues.push_back(255);
 
-  Default.Reds.push_back(10);
-  Default.Greens.push_back(10);
-  Default.Blues.push_back(10);
+  // close to black
+  Default.Reds.push_back(70);
+  Default.Greens.push_back(70);
+  Default.Blues.push_back(70);
 
+  const int channel_max = 240;
   int total = 28;
   for (int i = 0; i < total; ++i) {
-      Default.Reds.push_back((255 * (total - i)) / total);
-      Default.Greens.push_back((255 * i) / total);
-      Default.Blues.push_back(0);
+      if (i <= total / 2) {
+          Default.Reds.push_back(channel_max);
+          Default.Greens.push_back((channel_max * i * 2) / total);
+          Default.Blues.push_back(0);
+      }
+      else {
+          Default.Reds.push_back((channel_max * (total - i) * 2) / total);
+          Default.Greens.push_back(channel_max);
+          Default.Blues.push_back(0);
+      }
   }
 }
 

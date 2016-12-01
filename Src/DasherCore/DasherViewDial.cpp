@@ -85,92 +85,103 @@ void CDasherViewDial::HandleEvent(int iParameter) {
 
 CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint iRootMax, CExpansionPolicy &policy) {
     DASHER_ASSERT(pRoot != 0);
-    myint iDasherMinX;
-    myint iDasherMinY;
-    myint iDasherMaxX;
-    myint iDasherMaxY;
-    VisibleRegion(iDasherMinX, iDasherMinY, iDasherMaxX, iDasherMaxY);
-
+    
     m_iRenderCount = 0;
-
     screenint width = Screen()->GetWidth();
     screenint height = Screen()->GetHeight();
+    // white background
     Screen()->DrawRectangle(0, 0, width, height, 0, -1, 0);
 
     // render dial
     screenint origin_x = width / 2;
     screenint origin_y = height / 2;
+    const screenint dial_radius = 160;
+    const screenint thickness_level0 = 50;
+    const screenint thickness_level1 = 35;
+    const screenint thickness_level2 = 25;
+    const double PI = 3.141592654;
     
-    // current index;
-    int index = 7;
+    // TODO: dicide pointer_index by mouse coordinate
+    int pointer_index = 7;
 
     // Level-0
     CDasherNode *pOutput = pRoot->Parent();
-    if (pRoot->ChildCount() == 0) {
-        policy.ExpandNode(pRoot);
-    }
+    if (pRoot->ChildCount() == 0) policy.ExpandNode(pRoot); // expand the node if not yet
     // Level-1
-    CDasherNode *pLevel1 = pRoot->GetChildren()[index];
-    if (pLevel1->ChildCount() == 0) {
-        policy.ExpandNode(pLevel1);
-    }
+    CDasherNode *pLevel1 = pRoot->GetChildren()[pointer_index];
+    if (pLevel1->ChildCount() == 0) policy.ExpandNode(pLevel1);
     // Level-2 (expand level-1's most probable child)
-    CDasherNode *pLevel2 = pRoot->GetChildren()[0];
-    CDasherNode::ChildMap::const_iterator I, E = pLevel1->GetChildren().end();
-    for (I = pLevel1->GetChildren().begin(); I != E; ++I) {
-        CDasherNode *pChild = *I;
-        if (pChild->Range() > pLevel2->Range()) pLevel2 = *I;
+    CDasherNode *pLevel2 = pLevel1->GetChildren()[0];
+    for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
+        if ((*I)->Range() > pLevel2->Range()) pLevel2 = *I;
     }
-    if (pLevel2->ChildCount() == 0) {
-        policy.ExpandNode(pLevel2);
+    if (pLevel2->ChildCount() == 0) policy.ExpandNode(pLevel2);
+    CDasherNode *pLevel3 = pLevel2->GetChildren()[0];
+    for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
+        if ((*I)->Range() > pLevel3->Range()) pLevel3 = *I;
     }
+    
     // Level-2 ring
-    E = pLevel2->GetChildren().end();
     int count = 2;
-    for (I = pLevel2->GetChildren().begin(); I != E; ++I) {
+    int radius = dial_radius + thickness_level0 + thickness_level1 + thickness_level2;
+    // angle offset
+    int offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
+    for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = pChild->Lbnd() * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        Screen()->DrawArc(origin_x, origin_y, 280, startAngle, sweepAngle, count++, 1, 2);
+        Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, 1, 2);
+
+        // render text label
+        screenint label_x = origin_x + (radius - thickness_level2 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
+        screenint label_y = origin_y - (radius - thickness_level2 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
+        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 20, 1);
     }
 
     // Level-1 ring
-    E = pLevel1->GetChildren().end();
     count = 2;
-    for (I = pLevel1->GetChildren().begin(); I != E; ++I) {
+    radius = dial_radius + thickness_level0 + thickness_level1;
+    // angle offset
+    offset = CDasherModel::NORMALIZATION -(pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
+    for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = pChild->Lbnd() * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        Screen()->DrawArc(origin_x, origin_y, 240, startAngle, sweepAngle, count++, 1, 2);
+        Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, 1, 2);
+
+        // render text label
+        screenint label_x = origin_x + (radius - thickness_level1 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
+        screenint label_y = origin_y - (radius - thickness_level1 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
+        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 22, 1);
     }
 
     // Inner-most (level-0) ring
-    E = pRoot->GetChildren().end();
     count = 2;
-    for (I = pRoot->GetChildren().begin(); I != E; ++I) {
+    radius = dial_radius + thickness_level0;
+    // angle offset
+    offset = CDasherModel::NORMALIZATION -(pLevel1->Lbnd() + pLevel1->Hbnd()) / 2;
+    for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = pChild->Lbnd() * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        Screen()->DrawArc(origin_x, origin_y, 200, startAngle, sweepAngle, count++, 1, 2);
+        Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, 1, 2);
+        // render text label
+        screenint label_x = origin_x + (radius - thickness_level0/2) * cos((startAngle + sweepAngle / 2) * PI / 180);
+        screenint label_y = origin_y - (radius - thickness_level0/2) * sin((startAngle + sweepAngle / 2) * PI / 180);
+        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 24, 1);
     }
-    Screen()->DrawCircle(origin_x, origin_y, 200 - 40, 0, 1, 2);
-    // Index
+    Screen()->DrawCircle(origin_x, origin_y, dial_radius, 0, 1, 2);
+    
+    // Pointer
     CDasherScreen::point p[4];
     p[0].x = origin_x + 200 - 40; p[0].y = origin_y;
     p[1].x = origin_x + 200 - 40 - 25; p[1].y = origin_y - 12;
     p[2].x = origin_x + 200 - 40 - 25; p[2].y = origin_y + 12;
     p[3].x = origin_x + 200 - 40; p[3].y = origin_y;
     Screen()->Polygon(p, 4, 1, 1, 2);
+    // Pointed Label
+    Screen()->DrawString(pLevel1->getLabel(), p[0].x - 35, p[0].y, 24, 1);
 
-    //NewRender(pRoot, iRootMin, iRootMax, NULL, policy, std::numeric_limits<double>::infinity(), pOutput);
-
-    // Labels are drawn in a second parse to get the overlapping right
-    for (vector<CTextString *>::iterator it=m_DelayedTexts.begin(), E=m_DelayedTexts.end(); it!=E; it++)
-        DoDelayedText(*it);
-    m_DelayedTexts.clear();
-
-    // Finally decorate the view
-    //Crosshair();
     return pOutput;
 }
 
