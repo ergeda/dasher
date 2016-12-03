@@ -124,6 +124,10 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     const screenint thickness_level1 = 35;
     const screenint thickness_level2 = 25;
     const double PI = 3.141592654;
+    const screenint line_thickness = 1;
+    const screenint selected_line_thickness = 4;
+    const int line_color = 1; // gray
+    const int selected_line_color = 2; // dark
 
     // start angle offset
     screenint mouse_x, mouse_y;
@@ -163,7 +167,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     }
 
     // Level-2 ring
-    int count = 2;
+    int count = 5 + 28 + 28;
     int radius = dial_radius + thickness_level0 + thickness_level1 + thickness_level2;
     // angle offset
     offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
@@ -171,16 +175,16 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
         CDasherNode *pChild = *I;
         double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, 1, 2);
+        Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness);
 
         // render text label
         screenint label_x = origin_x + (radius - thickness_level2 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level2 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
-        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 20, 1);
+        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 20, 4);
     }
 
     // Level-1 ring
-    count = 2;
+    count = 5 + 28;
     radius = dial_radius + thickness_level0 + thickness_level1;
     // angle offset
     offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
@@ -188,16 +192,19 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
         CDasherNode *pChild = *I;
         double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, 1, 2);
+        Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness);
 
         // render text label
         screenint label_x = origin_x + (radius - thickness_level1 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level1 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
-        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 22, 1);
+        Screen()->DrawString(pChild->getLabel(), label_x, label_y, 22, 3);
     }
 
     // Inner-most (level-0) ring
-    count = 2;
+    count = 5;
+    double selected_startAngle, selected_sweepAngle;
+    int selected_color_index;
+    screenint selected_label_x, selected_label_y;
     radius = dial_radius + thickness_level0;
     // angle offset
     offset = CDasherModel::NORMALIZATION - (pDefault->Lbnd() + pDefault->Hbnd()) / 2;
@@ -205,16 +212,20 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
         CDasherNode *pChild = *I;
         double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + m_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        if (pChild == pLevel1) Screen()->DrawArc(origin_x, origin_y, radius + 5, startAngle, sweepAngle, count, 1, 2);
-        else Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count, 1, 2);
+        if (pChild == pLevel1) { selected_startAngle = startAngle; selected_sweepAngle = sweepAngle; selected_color_index = count; }
+        else Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count, line_color, line_thickness);
         count++;
         // render text label
         screenint label_x = origin_x + (radius - thickness_level0 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level0 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
-        if (pChild == pLevel1) Screen()->DrawString(pChild->getLabel(), label_x, label_y, 26, 1);
-        else Screen()->DrawString(pChild->getLabel(), label_x, label_y, 24, 1);
+        if (pChild == pLevel1) { selected_label_x = label_x; selected_label_y = label_y; }
+        else Screen()->DrawString(pChild->getLabel(), label_x, label_y, 24, 2);
     }
-    Screen()->DrawCircle(origin_x, origin_y, dial_radius, 0, 1, 2);
+    // render the selected one at last
+    Screen()->DrawSolidArc(origin_x, origin_y, radius + 5, selected_startAngle, selected_sweepAngle, selected_color_index, selected_line_color, selected_line_thickness);
+    Screen()->DrawString(pLevel1->getLabel(), selected_label_x, selected_label_y, 26, 2);
+    // inner most white cover
+    Screen()->DrawCircle(origin_x, origin_y, dial_radius, 0, selected_line_color, selected_line_thickness);
 
     // Pointer
     CDasherScreen::point p[4];
@@ -222,7 +233,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     p[1].x = origin_x + (dial_radius - 25)*cos(startAngle_offset * PI / 180) - 12*sin(startAngle_offset * PI / 180); p[1].y = origin_y - 12*cos(startAngle_offset * PI / 180) - (dial_radius - 25)*sin(startAngle_offset * PI / 180);
     p[2].x = origin_x + (dial_radius - 25)*cos(startAngle_offset * PI / 180) + 12*sin(startAngle_offset * PI / 180); p[2].y = origin_y + 12*cos(startAngle_offset * PI / 180) - (dial_radius - 25)*sin(startAngle_offset * PI / 180);
     p[3].x = p[0].x; p[3].y = p[0].y;
-    Screen()->Polygon(p, 4, 1, 1, 2);
+    Screen()->Polygon(p, 4, selected_line_color, selected_line_color, selected_line_thickness);
 
     // update offset
     m_cachedOffset = startAngle_offset;

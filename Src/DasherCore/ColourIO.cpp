@@ -64,11 +64,29 @@ void CColourIO::CreateDefault() {
   Default.Greens.push_back(255);
   Default.Blues.push_back(255);
 
-  // close to black
+  // gray
+  Default.Reds.push_back(150);
+  Default.Greens.push_back(150);
+  Default.Blues.push_back(150);
+
+  // dark
   Default.Reds.push_back(70);
   Default.Greens.push_back(70);
   Default.Blues.push_back(70);
 
+  // dark (alpha = 0.8)
+  double alpha = 0.8;
+  Default.Reds.push_back(70 * alpha + (1 - alpha) * 255);
+  Default.Greens.push_back(70 * alpha + (1 - alpha) * 255);
+  Default.Blues.push_back(70 * alpha + (1 - alpha) * 255);
+
+  // dark (alpha = 0.4)
+  alpha = 0.4;
+  Default.Reds.push_back(70 * alpha + (1 - alpha) * 255);
+  Default.Greens.push_back(70 * alpha + (1 - alpha) * 255);
+  Default.Blues.push_back(70 * alpha + (1 - alpha) * 255);
+
+  // color interpolation from red to yellow then to green
   const int channel_max = 240;
   int total = 28;
   for (int i = 0; i < total; ++i) {
@@ -81,6 +99,36 @@ void CColourIO::CreateDefault() {
           Default.Reds.push_back((channel_max * (total - i) * 2) / total);
           Default.Greens.push_back(channel_max);
           Default.Blues.push_back(0);
+      }
+  }
+
+  // mimic alpha(=0.8) blending (over white background)
+  alpha = 0.8;
+  for (int i = 0; i < total; ++i) {
+      if (i <= total / 2) {
+          Default.Reds.push_back(channel_max * alpha + (1- alpha) * 255);
+          Default.Greens.push_back(((channel_max * i * 2) / total) * alpha + (1 - alpha) * 255);
+          Default.Blues.push_back(0 * alpha + (1 - alpha) * 255);
+      }
+      else {
+          Default.Reds.push_back(((channel_max * (total - i) * 2) / total) * alpha + (1 - alpha) * 255);
+          Default.Greens.push_back(channel_max * alpha + (1 - alpha) * 255);
+          Default.Blues.push_back(0 * alpha + (1 - alpha) * 255);
+      }
+  }
+
+  // mimic alpha(=0.4) blending (over white background)
+  alpha = 0.4;
+  for (int i = 0; i < total; ++i) {
+      if (i <= total / 2) {
+          Default.Reds.push_back(channel_max * alpha + (1 - alpha) * 255);
+          Default.Greens.push_back(((channel_max * i * 2) / total) * alpha + (1 - alpha) * 255);
+          Default.Blues.push_back(0 * alpha + (1 - alpha) * 255);
+      }
+      else {
+          Default.Reds.push_back(((channel_max * (total - i) * 2) / total) * alpha + (1 - alpha) * 255);
+          Default.Greens.push_back(channel_max * alpha + (1 - alpha) * 255);
+          Default.Blues.push_back(0 * alpha + (1 - alpha) * 255);
       }
   }
 }
