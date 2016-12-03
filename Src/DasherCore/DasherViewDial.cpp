@@ -57,7 +57,8 @@ static char THIS_FILE[] = __FILE__;
 // FIXME - duplicated 'mode' code throught - needs to be fixed (actually, mode related stuff, Input2Dasher etc should probably be at least partially in some other class)
 
 CDasherViewDial::CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient)
-: CDasherView(DasherScreen,orient), CSettingsUserObserver(pCreateFrom), m_Y1(4), m_Y2(0.95 * CDasherModel::MAX_Y), m_Y3(0.05 * CDasherModel::MAX_Y), m_bVisibleRegionValid(false) {
+: CDasherView(DasherScreen,orient), CSettingsUserObserver(pCreateFrom), m_Y1(4), m_Y2(0.95 * CDasherModel::MAX_Y), m_Y3(0.05 * CDasherModel::MAX_Y),
+  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0) {
 
   //Note, nonlinearity parameters set in SetScaleFactor
   ScreenResized(DasherScreen);
@@ -81,6 +82,29 @@ void CDasherViewDial::HandleEvent(int iParameter) {
       m_bVisibleRegionValid = false;
       SetScaleFactor();
   }
+}
+
+void CDasherViewDial::KeyDown(int iId) {
+    if (iId == 100) { // mouse left-click
+        // handle output to edit control
+        if (m_pSelected) {
+            m_pSelected->Output();
+            m_pSelected->SetFlag(NF_SEEN, true);
+            // set parent
+            Model()->Make_root(m_pSelected);
+            // update offset
+            m_offset = m_cachedOffset;
+        } 
+    }
+    else if (iId == 101) { // mouse right-click
+        // handle delete/undo
+        if (m_pSelected != NULL) {
+            m_pSelected = m_pSelected->Parent();
+            if (m_pSelected != NULL) m_pSelected->Undo();
+            Model()->Reparent_root();
+            if (m_pSelected->Parent() != NULL && m_pSelected->Parent()->Parent() == NULL) m_offset = 0;
+        }
+    }
 }
 
 CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint iRootMax, CExpansionPolicy &policy) {
@@ -109,7 +133,6 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     else if (mouse_y - origin_y > 0) startAngle_offset += 360;
 
     // Level-0
-    CDasherNode *pOutput = pRoot->Parent();
     if (pRoot->ChildCount() == 0) policy.ExpandNode(pRoot); // expand the node if not yet
     CDasherNode *pDefault = pRoot->GetChildren()[0];
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
@@ -119,14 +142,13 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     CDasherNode *pLevel1 = pDefault;
     int offset = CDasherModel::NORMALIZATION - (pLevel1->Lbnd() + pLevel1->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
-        double lbnd = ((*I)->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION - startAngle_offset;
-        double hbnd = ((*I)->Hbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION - startAngle_offset;
-        if (hbnd < 0) { lbnd += 360; hbnd += 360; }
-        if (lbnd > 0) { lbnd -= 360; hbnd -= 360; }
+        double lbnd = ((*I)->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION - startAngle_offset + m_offset;
+        double hbnd = ((*I)->Hbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION - startAngle_offset + m_offset;
+        while (hbnd < 0) { lbnd += 360; hbnd += 360; }
+        while (lbnd > 0) { lbnd -= 360; hbnd -= 360; }
         if (lbnd <= 0 && hbnd >= 0) { pLevel1 = *I; break; }
     }
-    pOutput = pLevel1;
-
+    m_pSelected = pLevel1;
     // Level-1
     if (pLevel1->ChildCount() == 0) policy.ExpandNode(pLevel1);
     CDasherNode *pLevel2 = pLevel1->GetChildren()[0];
@@ -181,15 +203,15 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     offset = CDasherModel::NORMALIZATION - (pDefault->Lbnd() + pDefault->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + m_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-        if (pChild == pLevel1) Screen()->DrawArc(origin_x, origin_y, radius + 5, startAngle, sweepAngle, 1, 1, 2);
+        if (pChild == pLevel1) Screen()->DrawArc(origin_x, origin_y, radius + 5, startAngle, sweepAngle, count, 1, 2);
         else Screen()->DrawArc(origin_x, origin_y, radius, startAngle, sweepAngle, count, 1, 2);
         count++;
         // render text label
         screenint label_x = origin_x + (radius - thickness_level0 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level0 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
-        if (pChild == pLevel1) Screen()->DrawString(pChild->getLabel(), label_x, label_y, 26, 0);
+        if (pChild == pLevel1) Screen()->DrawString(pChild->getLabel(), label_x, label_y, 26, 1);
         else Screen()->DrawString(pChild->getLabel(), label_x, label_y, 24, 1);
     }
     Screen()->DrawCircle(origin_x, origin_y, dial_radius, 0, 1, 2);
@@ -202,7 +224,10 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     p[3].x = p[0].x; p[3].y = p[0].y;
     Screen()->Polygon(p, 4, 1, 1, 2);
 
-    return pOutput;
+    // update offset
+    m_cachedOffset = startAngle_offset;
+
+    return NULL;
 }
 
 #if 0 // rotate mode

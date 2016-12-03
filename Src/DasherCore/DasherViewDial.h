@@ -47,6 +47,8 @@ public:
   ///
   virtual void HandleEvent(int iParameter);
 
+  virtual void KeyDown(int iId);
+
   //Override to additionally reset scale factors etc.
   void SetOrientation(Opts::ScreenOrientations newOrient);
 
@@ -171,6 +173,13 @@ private:
   myint m_iDasherMaxX;
   myint m_iDasherMinY;
   myint m_iDasherMaxY;
+
+  // Cached selected node
+  CDasherNode *m_pSelected;
+
+  // Cached start angle offset
+  double m_offset;
+  double m_cachedOffset;
 };
 /// @}
 #include "DasherViewDial.inl"

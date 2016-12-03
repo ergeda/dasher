@@ -299,6 +299,14 @@ LRESULT CCanvas::OnLButtonUp(UINT message, WPARAM wParam, LPARAM lParam, BOOL& b
 
 }
 
+LRESULT CCanvas::OnRButtonDown(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+    bHandled = TRUE;
+    m_pDasherInterface->KeyDown(GetTickCount(), 101);
+    SetFocus();
+    return 0;
+}
+
 // PRLW: These two functions are called on Tablet PCs when the stylus comes
 // within or leaves the detection range of screen. Make these appear as mouse
 // clicks to start/stop on mouse click. (XXX Ideally we would prefer start/stop

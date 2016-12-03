@@ -65,6 +65,7 @@ class CCanvas : public ATL::CWindowImpl<CCanvas> {
     MESSAGE_HANDLER(WM_LBUTTONDBLCLK, OnLButtonDblClk)
     MESSAGE_HANDLER(WM_LBUTTONDOWN, OnLButtonDown)
     MESSAGE_HANDLER(WM_LBUTTONUP, OnLButtonUp)
+    MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
     MESSAGE_HANDLER(WM_CURSOR_IN_RANGE, OnCursorInRange)
     MESSAGE_HANDLER(WM_CURSOR_OUT_OF_RANGE, OnCursorOutOfRange)
     MESSAGE_HANDLER(WM_SIZE, OnSize)
@@ -87,6 +88,7 @@ class CCanvas : public ATL::CWindowImpl<CCanvas> {
   LRESULT OnLButtonDblClk(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
   LRESULT OnLButtonDown(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
   LRESULT OnLButtonUp(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+  LRESULT OnRButtonDown(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
   LRESULT OnPaint(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
   LRESULT OnCreate(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
   LRESULT OnDestroy(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

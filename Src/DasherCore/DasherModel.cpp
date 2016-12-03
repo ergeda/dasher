@@ -89,7 +89,7 @@ void CDasherModel::Make_root(CDasherNode *pNewRoot) {
   //  std::cout << "Make root" << std::endl;
 
   DASHER_ASSERT(pNewRoot != NULL);
-  DASHER_ASSERT(pNewRoot->Parent() == m_Root);
+  //DASHER_ASSERT(pNewRoot->Parent() == m_Root);
 
   m_Root->DeleteNephews(pNewRoot);
   m_Root->SetFlag(NF_COMMITTED, true);
@@ -502,17 +502,17 @@ void CDasherModel::RenderToView(CDasherView *pView, CExpansionPolicy &policy) {
 
   DASHER_ASSERT(pView != NULL);
   DASHER_ASSERT(m_Root != NULL);
-
+#if 0
   while(pView->IsSpaceAroundNode(m_Rootmin,m_Rootmax)) {
     if (!Reparent_root()) break;
   }
-
+#endif
   // The Render routine will fill iGameTargetY with the Dasher Coordinate of the
   // youngest node with NF_GAME set. The model is responsible for setting NF_GAME on
   // the appropriate Nodes.
   CDasherNode *pOutput = pView->Render(m_Root, m_Rootmin + m_iDisplayOffset, m_Rootmax + m_iDisplayOffset, policy);
-  OutputTo(pOutput);
-
+  //OutputTo(pOutput);
+#if 0
   while (CDasherNode *pNewRoot = m_Root->onlyChildRendered) {
 #ifdef DEBUG
     //if only one child was rendered, no other child covers the screen -
@@ -528,7 +528,7 @@ void CDasherModel::RenderToView(CDasherView *pView, CExpansionPolicy &policy) {
     } else
       break;
   }
-
+#endif
 }
 
 void CDasherModel::ScheduleZoom(dasherint y1, dasherint y2, int nsteps) {

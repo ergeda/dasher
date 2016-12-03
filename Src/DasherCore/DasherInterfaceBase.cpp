@@ -165,6 +165,9 @@ void CDasherInterfaceBase::Realize(unsigned long ulTime) {
   // set input to view
   m_pDasherView->SetInput(m_pInput);
 
+  // set model to view
+  m_pDasherView->SetModel(m_pDasherModel);
+
   //we may have created a control manager already; in which case, we need
   // it to realize there's now an inputfilter (which may provide more actions).
   // So tell it the setting has changed...
@@ -515,41 +518,16 @@ void CDasherInterfaceBase::NewFrame(unsigned long iTime, bool bForceRedraw) {
       bBlit = true;
     } else {
       CExpansionPolicy *pol=m_defaultPolicy;
-  
-      //1. Schedule any per-frame movement in the model...
-      if(m_pInputFilter) {
-        m_pInputFilter->Timer(iTime, m_pDasherView, m_pInput, m_pDasherModel, &pol);
-      }
+
       //2. Render...
 
       //If we've been told to render another frame via ScheduleRedraw,
       // that's the same as passing in true to NewFrame.
       if (m_bRedrawScheduled) bForceRedraw=true;
       m_bRedrawScheduled=true;
-#if 0 // crash, so comment out
-      //Apply any movement that has been scheduled
-      if (m_pDasherModel->NextScheduledStep()) {
-        //yes, we moved...
-        if (!m_bLastMoved) onUnpause(iTime);
-        // ...so definitely need to render the nodes. We also make sure
-        // to render at least one more frame - think that's a bit of policy
-        // just to be on the safe side, and may not be strictly necessary...
-        bForceRedraw=m_bRedrawScheduled=m_bLastMoved=true;
-      } else {
-        //no movement
-        if (m_bLastMoved) bForceRedraw=true;//move into onPause() method if reqd
-        m_bLastMoved=false;
-      }
-#endif
+
       //2. Render nodes decorations, messages
       bBlit = Redraw(iTime, bForceRedraw, *pol);
-
-      if (m_pUserLog != NULL) {
-        //(any) UserLogBase will have been watching output events to gather information
-        // about symbols added/deleted; this tells it to apply that information at end-of-frame
-        // (previously DashIntf gathered the info, and then passed it to the logger here).
-        m_pUserLog->FrameEnded();
-      }
     }
     if (FinishRender(iTime)) bBlit = true;
     if (bBlit) m_DasherScreen->Display();
@@ -729,6 +707,10 @@ CUserLogBase* CDasherInterfaceBase::GetUserLogPtr() {
 void CDasherInterfaceBase::KeyDown(unsigned long iTime, int iId) {
   if(isLocked())
     return;
+
+  if (m_pDasherView) {
+      m_pDasherView->KeyDown(iId);
+  }
 
   if(m_pInputFilter) {
     m_pInputFilter->KeyDown(iTime, iId, m_pDasherView, m_pInput, m_pDasherModel);
