@@ -66,6 +66,7 @@
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)DasherControl.lib</OutputFile>
+      <AdditionalDependencies>dinput8.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,6 +120,7 @@
     <ClCompile Include="Common\WinUTF8.cpp" />
     <ClCompile Include="Dasher.cpp" />
     <ClCompile Include="DasherMouseInput.cpp" />
+    <ClCompile Include="DasherXboxInput.cpp" />
     <ClCompile Include="KeyboardHelper.cpp" />
     <ClCompile Include="Sockets\SocketInput.cpp" />
     <ClCompile Include="TabletPC\CursorInRange.cpp" />
@@ -133,6 +135,7 @@
     <ClInclude Include="Common\WinUTF8.h" />
     <ClInclude Include="Dasher.h" />
     <ClInclude Include="DasherMouseInput.h" />
+    <ClInclude Include="DasherXboxInput.h" />
     <ClInclude Include="KeyboardHelper.h" />
     <ClInclude Include="Sockets\SocketInput.h" />
     <ClInclude Include="TabletPC\CursorInRange.h" />

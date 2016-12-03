@@ -58,7 +58,7 @@ static char THIS_FILE[] = __FILE__;
 
 CDasherViewDial::CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient)
 : CDasherView(DasherScreen,orient), CSettingsUserObserver(pCreateFrom), m_Y1(4), m_Y2(0.95 * CDasherModel::MAX_Y), m_Y3(0.05 * CDasherModel::MAX_Y),
-  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0) {
+  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0), m_cachedOffset(0) {
 
   //Note, nonlinearity parameters set in SetScaleFactor
   ScreenResized(DasherScreen);
@@ -132,9 +132,19 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     // start angle offset
     screenint mouse_x, mouse_y;
     Input()->GetScreenCoords(mouse_x, mouse_y, this);
-    double startAngle_offset = atan((mouse_y - origin_y) * -1.0 / (mouse_x - origin_x)) * 180.0 / PI;
+    // for system mouse
+    /*double startAngle_offset = atan((mouse_y - origin_y) * -1.0 / (mouse_x - origin_x)) * 180.0 / PI;
     if (mouse_x - origin_x < 0) startAngle_offset += 180;
-    else if (mouse_y - origin_y > 0) startAngle_offset += 360;
+    else if (mouse_y - origin_y > 0) startAngle_offset += 360;*/
+    // for Xbox controller
+    const screenint MID_RANGE = 32768;
+    double startAngle_offset = atan((mouse_y - MID_RANGE) * -1.0 / (mouse_x - MID_RANGE)) * 180.0 / PI;
+    if (mouse_x - MID_RANGE < 0) startAngle_offset += 180;
+    else if (mouse_y - MID_RANGE > 0) startAngle_offset += 360;
+
+    if ((mouse_y - MID_RANGE) * (mouse_y - MID_RANGE) + (mouse_x - MID_RANGE) * (mouse_x - MID_RANGE) < MID_RANGE * MID_RANGE) {
+        startAngle_offset = m_cachedOffset;
+    }
 
     // Level-0
     if (pRoot->ChildCount() == 0) policy.ExpandNode(pRoot); // expand the node if not yet

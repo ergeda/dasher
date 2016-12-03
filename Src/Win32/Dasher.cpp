@@ -8,6 +8,7 @@
 #include "Common\WinUTF8.h"
 #include "Widgets/Canvas.h"
 #include "DasherMouseInput.h"
+#include "DasherXboxInput.h"
 #include "DasherWindow.h"
 #include "Widgets/Edit.h"
 
@@ -59,7 +60,7 @@ void CDasher::CreateModules() {
   CDasherInterfaceBase::CreateModules();
   RegisterModule(new CSocketInput(this,this));
   RegisterModule(new CBTSocketInput());
-  RegisterModule(new CDasherMouseInput(m_pCanvas->getwindow()));
+  RegisterModule(new CDasherXboxInput(m_pCanvas->getwindow()));
 }
 
 void CDasher::Main() {
