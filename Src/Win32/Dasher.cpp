@@ -60,6 +60,7 @@ void CDasher::CreateModules() {
   CDasherInterfaceBase::CreateModules();
   RegisterModule(new CSocketInput(this,this));
   RegisterModule(new CBTSocketInput());
+  //RegisterModule(new CDasherMouseInput(m_pCanvas->getwindow()));
   RegisterModule(new CDasherXboxInput(m_pCanvas->getwindow()));
 }
 
