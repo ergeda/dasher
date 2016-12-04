@@ -453,7 +453,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_APP_TITLE           "Dasher"
+    IDS_APP_TITLE           "Dial Input"
     IDS_FILE_SAVE           "Save"
     IDS_OPTIONS_PREFS       "Prefs"
     IDS_FILE_OPEN           "Open"
