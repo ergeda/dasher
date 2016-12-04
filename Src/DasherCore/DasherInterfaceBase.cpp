@@ -709,7 +709,7 @@ void CDasherInterfaceBase::KeyDown(unsigned long iTime, int iId) {
     return;
 
   if (m_pDasherView) {
-      m_pDasherView->KeyDown(iId);
+      //m_pDasherView->KeyDown(iId);
   }
 
   if(m_pInputFilter) {
