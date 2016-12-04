@@ -41,7 +41,7 @@ BOOL CALLBACK    EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID*
 BOOL CALLBACK    EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
 HRESULT InitDirectInput(HWND hDlg);
 VOID FreeDirectInput();
-HRESULT UpdateInputState(HWND hDlg, long& x, long& y);
+HRESULT UpdateInputState(HWND hDlg, long& x, long& y, int& buttonId);
 
 // Stuff to filter out XInput devices
 #include <wbemidl.h>
@@ -388,7 +388,7 @@ BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi,
 // Name: UpdateInputState()
 // Desc: Get the input device's state and display it.
 //-----------------------------------------------------------------------------
-HRESULT UpdateInputState(HWND hDlg, long &x, long &y)
+HRESULT UpdateInputState(HWND hDlg, long &x, long &y, int& buttonId)
 {
     HRESULT hr;
     TCHAR strText[512] = { 0 }; // Device state text
@@ -425,15 +425,15 @@ HRESULT UpdateInputState(HWND hDlg, long &x, long &y)
     x = js.lX;
     y = js.lY;
 
+    buttonId = -1;
+
     // Fill up text with which buttons are pressed
     _tcscpy_s(strText, 512, TEXT(""));
     for (int i = 0; i < 128; i++)
     {
         if (js.rgbButtons[i] & 0x80)
         {
-            TCHAR sz[128];
-            _stprintf_s(sz, 128, TEXT("%02d "), i);
-            _tcscat_s(strText, 512, sz);
+            buttonId = i;
         }
     }
 
@@ -460,9 +460,9 @@ VOID FreeDirectInput()
 }
 
 
-
+// CDashserXboxInput definition
 CDasherXboxInput::CDasherXboxInput(HWND _hwnd)
-: CScreenCoordInput(0, "Mouse Input"), m_hwnd(_hwnd) {
+: CScreenCoordInput(0, "Mouse Input"), m_hwnd(_hwnd), m_buttonId(-1) {
     HRESULT hr = InitDirectInput(m_hwnd);
     /*if (FAILED(InitDirectInput(m_hwnd)))
     {
@@ -479,9 +479,15 @@ CDasherXboxInput::~CDasherXboxInput(void) {
 }
 
 bool CDasherXboxInput::GetScreenCoords(screenint &iX, screenint &iY, CDasherView *pView) {
-    long x, y;
-    UpdateInputState(m_hwnd, x, y);
+    long x, y; int buttonId = -1;
+    UpdateInputState(m_hwnd, x, y, buttonId);
     iX = x; iY = y;
+
+    if (buttonId != m_buttonId) {
+        if (buttonId == 0) pView->KeyDown(100); // A
+        else if (buttonId == 2) pView->KeyDown(101); // X
+        m_buttonId = buttonId;
+    }
 
     return true;
 }

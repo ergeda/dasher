@@ -14,4 +14,5 @@ public:
 
 private:
   HWND m_hwnd;
+  int m_buttonId;
 };
