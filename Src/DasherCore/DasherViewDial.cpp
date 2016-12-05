@@ -107,6 +107,39 @@ void CDasherViewDial::KeyDown(int iId) {
     }
 }
 
+void CDasherViewDial::WorkaroundTinyRange(CDasherNode *pRoot) {
+    DASHER_ASSERT(pRoot != 0);
+
+    const unsigned int MIN_RANGE = 1169;
+    bool isOK = true;
+    for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
+        if ((*I)->Range() < MIN_RANGE) isOK = false;
+    }
+    if (isOK) return;
+
+    int rest = CDasherModel::NORMALIZATION - pRoot->ChildCount() * MIN_RANGE;
+    int sum = 0;
+    for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
+        if ((*I)->Range() >= MIN_RANGE) sum += (*I)->Range();
+    }
+
+    // amortize the rest range
+    unsigned int last = 0;
+    for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
+        unsigned int range = (*I)->Range();
+        if (range >= MIN_RANGE) {
+            (*I)->Lbnd() = last;
+            (*I)->Hbnd() = last + MIN_RANGE + (double(range) * rest / sum);
+        }
+        else {
+            (*I)->Lbnd() = last;
+            (*I)->Hbnd() = last + MIN_RANGE; // ensure MIN_RANGE
+        }
+        last = (*I)->Hbnd();
+        if (I + 1 == E) (*I)->Hbnd() = CDasherModel::NORMALIZATION;
+    }
+}
+
 CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint iRootMax, CExpansionPolicy &policy) {
     DASHER_ASSERT(pRoot != 0);
 
@@ -150,10 +183,12 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
 
     // Level-0
     if (pRoot->ChildCount() == 0) policy.ExpandNode(pRoot); // expand the node if not yet
+    WorkaroundTinyRange(pRoot);
     CDasherNode *pDefault = pRoot->GetChildren()[0];
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
         if ((*I)->Range() > pDefault->Range()) pDefault = *I;
     }
+
     // decide pointer_index
     CDasherNode *pLevel1 = pDefault;
     int offset = CDasherModel::NORMALIZATION - (pLevel1->Lbnd() + pLevel1->Hbnd()) / 2;
@@ -167,12 +202,14 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     m_pSelected = pLevel1;
     // Level-1
     if (pLevel1->ChildCount() == 0) policy.ExpandNode(pLevel1);
+    WorkaroundTinyRange(pLevel1);
     CDasherNode *pLevel2 = pLevel1->GetChildren()[0];
     for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
         if ((*I)->Range() > pLevel2->Range()) pLevel2 = *I;
     }
     // Level-2 (expand level-1's most probable child)
     if (pLevel2->ChildCount() == 0) policy.ExpandNode(pLevel2);
+    WorkaroundTinyRange(pLevel2);
     CDasherNode *pLevel3 = pLevel2->GetChildren()[0];
     for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
         if ((*I)->Range() > pLevel3->Range()) pLevel3 = *I;

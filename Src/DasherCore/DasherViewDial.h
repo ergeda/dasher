@@ -117,6 +117,8 @@ private:
 
   void DoDelayedText(CTextString *pText);
 
+  void CDasherViewDial::WorkaroundTinyRange(CDasherNode *pRoot);
+
   ///
   /// Draw text specified in Dasher co-ordinates
   ///
