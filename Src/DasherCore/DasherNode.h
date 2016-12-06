@@ -275,6 +275,13 @@ class Dasher::CDasherNode:private NoClones {
     throw "Hack for pre-MandarinDasher ConversionManager::BuildTree method, needs to access CAlphabetManager-private struct";
   }
 
+  void Toggle(bool uppercase) {
+      if (m_pLabel) m_pLabel->m_uppercase = uppercase;
+      m_uppercase = uppercase;
+  }
+
+  bool UpperCase() const { return m_uppercase; }
+
   /// @}
 
  private:
@@ -290,6 +297,9 @@ class Dasher::CDasherNode:private NoClones {
   int m_iFlags;
 
   int m_iOffset;
+
+  // hack for upper/lower case toggle
+  bool m_uppercase;
 
  protected:
   const int m_iColour;

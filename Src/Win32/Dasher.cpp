@@ -336,12 +336,24 @@ void CDasher::CopyToClipboard(const string &strText) {
 std::string CDasher::GetAllContext() {
   CString wideText;
   m_pEdit->GetWindowText(wideText);
+
+  // TODO: disgusting hack to workaround upper/lowercase toggle
+  for (int i = 0; i < wideText.GetLength(); ++i) {
+      if (wideText[i] >= 'A' && wideText[i] <= 'Z') wideText.SetAt(i, wideText[i] - 'A' + 'a');
+  }
+
   return WinUTF8::wstring_to_UTF8string(wideText);
 }
 
 std::string CDasher::GetContext(unsigned int iStart, unsigned int iLength) {
   CString wideText;
   m_pEdit->GetWindowText(wideText);
+
+  // TODO: disgusting hack to workaround upper/lowercase toggle
+  for (int i = 0; i < wideText.GetLength(); ++i) {
+      if (wideText[i] >= 'A' && wideText[i] <= 'Z') wideText.SetAt(i, wideText[i] - 'A' + 'a');
+  }
+
   return WinUTF8::wstring_to_UTF8string(wideText.Mid(iStart, iLength));
 }
 

@@ -58,7 +58,7 @@ static char THIS_FILE[] = __FILE__;
 
 CDasherViewDial::CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient)
 : CDasherView(DasherScreen,orient), CSettingsUserObserver(pCreateFrom), m_Y1(4), m_Y2(0.95 * CDasherModel::MAX_Y), m_Y3(0.05 * CDasherModel::MAX_Y),
-  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0), m_cachedOffset(0) {
+  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0), m_cachedOffset(0), m_uppercase(false) {
 
   //Note, nonlinearity parameters set in SetScaleFactor
   ScreenResized(DasherScreen);
@@ -100,10 +100,25 @@ void CDasherViewDial::KeyDown(int iId) {
         // handle delete/undo
         if (m_pSelected != NULL) {
             m_pSelected = m_pSelected->Parent();
+
+            if (m_pSelected != NULL) {
+                if (m_pSelected->getLabel() != NULL) {
+                    std::string tmp = m_pSelected->getLabel()->m_strText;
+                    OutputDebugStringA(tmp.c_str());
+                }
+                else OutputDebugStringA("NULL LABEL\n");
+            }
+            else OutputDebugStringA("NULL\n");
+            
+
             if (m_pSelected != NULL) m_pSelected->Undo();
             Model()->Reparent_root();
             if (m_pSelected->Parent() != NULL && m_pSelected->Parent()->Parent() == NULL) m_offset = 0;
         }
+    }
+    else if (iId == 102) { // right trigger (RT)
+        // toggle upper/lowercase
+        m_uppercase = !m_uppercase;
     }
 }
 
@@ -229,6 +244,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
         // render text label
         screenint label_x = origin_x + (radius - thickness_level2 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level2 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
+        pChild->Toggle(m_uppercase); // disgusting hack
         Screen()->DrawString(pChild->getLabel(), label_x, label_y, 20, 4);
     }
 
@@ -246,6 +262,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
         // render text label
         screenint label_x = origin_x + (radius - thickness_level1 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level1 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
+        pChild->Toggle(m_uppercase); // disgusting hack
         Screen()->DrawString(pChild->getLabel(), label_x, label_y, 22, 3);
     }
 
@@ -267,6 +284,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
         // render text label
         screenint label_x = origin_x + (radius - thickness_level0 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
         screenint label_y = origin_y - (radius - thickness_level0 / 2) * sin((startAngle + sweepAngle / 2) * PI / 180);
+        pChild->Toggle(m_uppercase); // disgusting hack
         if (pChild == pLevel1) { selected_label_x = label_x; selected_label_y = label_y; }
         else Screen()->DrawString(pChild->getLabel(), label_x, label_y, 24, 2);
     }

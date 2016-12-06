@@ -146,8 +146,21 @@ void CScreen::DrawString(CDasherScreen::Label *lab, screenint x1, screenint y1, 
   
   iCRefOld = SetTextColor(m_hDCBuffer, iCRefNew);
 
+  // TODO: disgusting hack for case toggling
+  Tstring text = label->m_OutputText;
+  if (label->m_uppercase) {
+      for (int i = 0; i < text.length(); ++i) {
+          if (text[i] >= 'a' && text[i] <= 'z') text[i] -= 'a' - 'A';
+      }
+  }
+  else {
+      for (int i = 0; i < text.length(); ++i) {
+          if (text[i] >= 'A' && text[i] <= 'Z') text[i] -= 'A' - 'a';
+      }
+  }
+
   // The Windows API dumps all its function names in the global namespace, ::
-  ::DrawText(m_hDCBuffer, label->m_OutputText.c_str(), label->m_OutputText.size(), &Rect, DT_CENTER | DT_VCENTER);
+  ::DrawText(m_hDCBuffer, text.c_str(), text.size(), &Rect, DT_CENTER | DT_VCENTER);
   
   SetTextColor(m_hDCBuffer, iCRefOld);
   SelectObject(m_hDCBuffer, old);

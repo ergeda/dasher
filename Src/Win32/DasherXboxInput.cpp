@@ -59,7 +59,7 @@ HWND    g_hWnd;
 bool    g_bDeadZoneOn = true;
 
 //-----------------------------------------------------------------------------
-HRESULT UpdateControllerState(int &x, int &y, int& buttonId)
+HRESULT UpdateControllerState(int &x, int &y, int& buttonId, int& rightTrigger)
 {
     DWORD dwResult;
     for (DWORD i = 0; i < MAX_CONTROLLERS; i++)
@@ -73,7 +73,7 @@ HRESULT UpdateControllerState(int &x, int &y, int& buttonId)
             g_Controllers[i].bConnected = false;
     }
 
-    x = 1; y = 0; buttonId = -1;
+    x = 1; y = 0; buttonId = -1; rightTrigger = -1;
     // only use the first controller
     DWORD i = 0;
     if (g_Controllers[i].bConnected) {
@@ -97,6 +97,8 @@ HRESULT UpdateControllerState(int &x, int &y, int& buttonId)
 
         x = g_Controllers[i].state.Gamepad.sThumbLX;
         y = g_Controllers[i].state.Gamepad.sThumbLY;
+
+        rightTrigger = g_Controllers[i].state.Gamepad.bRightTrigger;
     }
 
     return S_OK;
@@ -104,7 +106,7 @@ HRESULT UpdateControllerState(int &x, int &y, int& buttonId)
 
 // CDashserXboxInput definition
 CDasherXboxInput::CDasherXboxInput(HWND _hwnd)
-: CScreenCoordInput(0, "Mouse Input"), m_hwnd(_hwnd), m_buttonId(-1) {
+: CScreenCoordInput(0, "Mouse Input"), m_hwnd(_hwnd), m_buttonId(-1), m_rightTrigger(-1) {
     // Init state
     ZeroMemory(g_Controllers, sizeof(CONTROLLER_STATE) * MAX_CONTROLLERS);
 }
@@ -113,15 +115,20 @@ CDasherXboxInput::~CDasherXboxInput(void) {
 }
 
 bool CDasherXboxInput::GetScreenCoords(screenint &iX, screenint &iY, CDasherView *pView) {
-    int x, y, buttonId = -1;
+    int x, y, buttonId = -1, rightTrigger = -1;
 
-    UpdateControllerState(x, y, buttonId);
+    UpdateControllerState(x, y, buttonId, rightTrigger);
     iX = x; iY = y;
 
     if (buttonId != m_buttonId) {
         if (buttonId == 0) pView->KeyDown(100); // A
         else if (buttonId == 2) pView->KeyDown(101); // X
         m_buttonId = buttonId;
+    }
+
+    if (rightTrigger != m_rightTrigger) {
+        if (rightTrigger == 255) pView->KeyDown(102); // right trigger (RT)
+        m_rightTrigger = rightTrigger;
     }
 
     return true;

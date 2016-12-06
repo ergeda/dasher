@@ -85,6 +85,8 @@ public:
     ///Delete the label. This should free up any resources associated with
     /// drawing the string onto the screen, e.g. layouts or textures.
     virtual ~Label() {}
+    // (disgusting) upper/lowercase toggle
+    bool m_uppercase;
   };
 
   ///Make a label for use with this screen.

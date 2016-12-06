@@ -182,6 +182,9 @@ private:
   // Cached start angle offset
   double m_offset;
   double m_cachedOffset;
+
+  // upper/lowercase indicator
+  bool m_uppercase;
 };
 /// @}
 #include "DasherViewDial.inl"
