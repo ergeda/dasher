@@ -46,6 +46,8 @@ public:
 
   void DrawCircle(screenint iCX, screenint iCY, screenint iR, int iFillColour, int iLineColour, int iThickness) override;
 
+  void DrawSolidArc(screenint iCX, screenint iCY, screenint iR, double dStartAngle, double dSweepAngle, int iFillColour, int iLineColour, int iLineWidth) override;
+
   // Draw a line of arbitrary colour.
   //! Draw a line between each of the points in the array
   //

@@ -96,7 +96,7 @@ HWND CDasherWindow::Create() {
   HWND hWnd;
 
   if (iStyle == APP_STYLE_DIRECT) {
-    hWnd = CWindowImpl<CDasherWindow >::Create(NULL, NULL, WindowTitle.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, WS_EX_NOACTIVATE | WS_EX_APPWINDOW | WS_EX_TOPMOST);
+    hWnd = CWindowImpl<CDasherWindow >::Create(NULL, NULL, WindowTitle.c_str(), (WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX, WS_EX_NOACTIVATE | WS_EX_APPWINDOW | WS_EX_TOPMOST);
     ::SetMenu(hWnd, NULL);
   }
   else {

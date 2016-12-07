@@ -1,11 +1,10 @@
 // DasherViewSquare.h
-//
-// Copyright (c) 2001-2004 David Ward
 
-#ifndef __DasherViewSquare_h__
-#define __DasherViewSquare_h__
+#ifndef __DasherViewDial_h__
+#define __DasherViewDial_h__
 #include "DasherView.h"
 #include "DasherScreen.h"
+#include "DasherInput.h"
 #include <deque>
 #include "Alphabet/GroupInfo.h"
 #include "SettingsStore.h"
@@ -13,10 +12,11 @@
 using namespace std;
 
 namespace Dasher {
-  class CDasherViewSquare;
+  class CDasherViewDial;
   class CDasherView;
   class CDasherModel;
   class CDasherNode;
+  class CDasherInput;
 }
 
 /// \ingroup View
@@ -29,7 +29,7 @@ namespace Dasher {
 ///
 /// Horizontal mapping - linear and log
 /// Vertical mapping - linear with different gradient
-class Dasher::CDasherViewSquare : public Dasher::CDasherView, public CSettingsUserObserver
+class Dasher::CDasherViewDial : public Dasher::CDasherView, public CSettingsUserObserver
 {
 public:
 
@@ -39,15 +39,15 @@ public:
   /// \todo Don't cache screen and model locally - screen can be
   /// passed as parameter to the drawing functions, and data structure
   /// can be extracted from the model and passed too.
-
-  CDasherViewSquare(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient);
-  ~CDasherViewSquare();
+  CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient);
+  ~CDasherViewDial();
 
   ///
   /// Event handler
   ///
-
   virtual void HandleEvent(int iParameter);
+
+  virtual void KeyDown(int iId);
 
   //Override to additionally reset scale factors etc.
   void SetOrientation(Opts::ScreenOrientations newOrient);
@@ -94,28 +94,11 @@ public:
 
   /// @}
 
-  void DasherSpaceArc(myint cy, myint r, myint x1, myint y1, myint x2, myint y2, int colour, int iLineWidth);
+  void DasherSpaceArc(myint cy, myint r, myint x1, myint y1, myint x2, myint y2, int colour, int iLineWidth) {}
   
 private:
-  ///draw a possibly-truncated triangle given dasher-space coords & accounting for non-linearity
-  /// @param x = max dasher-x extent
-  /// @param y1, y2 = dasher-y extent along y-axis
-  /// @param midy1,midy2 = extent along line of max x (midy1==midy2 => triangle, midy1<midy2 => truncated tri)
-  void TruncateTri(myint x, myint y1, myint y2, myint midy1, myint midy2, int fillColor, int outlineColor, int lineWidth);
-
-  /// compute screen coords for a circle, centered on y-axis, between two points
-  /// cy, r - dasher coords of center (on y-axis), radius
-  /// x1,y1 - one end-point of arc (dasher coords)
-  /// x2,y2 - other end-point (dasher-coords)
-  /// dest - point (x2,y2) in screen coords
-  /// pts - vector into which to store points; on entry, last element should already be screen-coords of (x1,y1)
-  /// dXMul - multiply x coords (in dasher space) by this (i.e. aspect ratio), for ovals
-  void CircleTo(myint cy, myint r, myint y1, myint x1, myint y3, myint x3, CDasherScreen::point dest, vector<CDasherScreen::point> &pts, double dXMul);
-  void Circle(myint Range, myint lowY, myint highY, int fCol, int oCol, int lWidth);
-  void Quadric(myint Range, myint lowY, myint highY, int fillColor, int outlineColour, int lineWidth);
-
   class CTextString {
-  public: //to CDasherViewSquare...
+  public: //to CDasherViewDial...
     ///Creates a request that label will be drawn.
     /// x,y are screen coords of midpoint of leading edge;
     /// iSize is desired size (already computed from requested position)
@@ -133,22 +116,15 @@ private:
   std::vector<CTextString *> m_DelayedTexts;
 
   void DoDelayedText(CTextString *pText);
+
+  void CDasherViewDial::WorkaroundTinyRange(CDasherNode *pRoot);
+
   ///
   /// Draw text specified in Dasher co-ordinates
   ///
-
   CTextString *DasherDrawText(myint iMaxX, myint iMidY, CDasherScreen::Label *pLabel, CTextString *pParent, int iColor);
 
-  ///
-  /// (Recursively) render a node and all contained subnodes, in disjoint rects.
-  /// (i.e. appropriate for LP_SHAPE_TYPE==0). Each call responsible for rendering
-  /// exactly the area contained within the node.
-  /// @param pOutput The innermost node covering the crosshair (if any)
-  void DisjointRender(CDasherNode * Render, myint y1, myint y2, CTextString *prevText, CExpansionPolicy &policy, double dMaxCost, CDasherNode *&pOutput);
-
   /// (Recursively) render a node and all contained subnodes, in overlapping shapes
-  /// (according to LP_SHAPE_TYPE: 1=rects, 2=triangles, 3=truncated triangles,
-  /// 4=quadrics, 5=semicircles)
   /// Each call responsible for rendering exactly the area contained within the node.
   /// @param pOutput The innermost node covering the crosshair (if any)
   void NewRender(CDasherNode * Render, myint y1, myint y2, CTextString *prevText, CExpansionPolicy &policy, double dMaxCost, CDasherNode *&pOutput);
@@ -199,8 +175,18 @@ private:
   myint m_iDasherMaxX;
   myint m_iDasherMinY;
   myint m_iDasherMaxY;
+
+  // Cached selected node
+  CDasherNode *m_pSelected;
+
+  // Cached start angle offset
+  double m_offset;
+  double m_cachedOffset;
+
+  // upper/lowercase indicator
+  bool m_uppercase;
 };
 /// @}
-#include "DasherViewSquare.inl"
+#include "DasherViewDial.inl"
 
-#endif /* #ifndef __DasherViewSquare_h__ */
+#endif /* #ifndef __DasherViewDial_h__ */

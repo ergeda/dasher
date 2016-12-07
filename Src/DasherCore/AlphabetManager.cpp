@@ -642,7 +642,19 @@ void CAlphabetManager::CSymbolNode::Output() {
   }
   //std::cout << this << " " << Parent() << ": Output at offset " << m_iOffset << " *" << m_pMgr->m_pAlphabet->GetText(t) << "* " << std::endl;
 
-  m_pMgr->m_pInterface->editOutput(outputText(), this);
+  // TODO: digusting hack for case toggling
+  std::string text = outputText();
+  if (UpperCase()) {
+      for (int i = 0; i < text.length(); ++i) {
+          if (text[i] >= 'a' && text[i] <= 'z') text[i] -= 'a' - 'A';
+      }
+  }
+  else {
+      for (int i = 0; i < text.length(); ++i) {
+          if (text[i] >= 'A' && text[i] <= 'Z') text[i] -= 'A' - 'a';
+      }
+  }
+  m_pMgr->m_pInterface->editOutput(text, this);
 }
 
 SymbolProb CAlphabetManager::CSymbolNode::GetSymbolProb() const {

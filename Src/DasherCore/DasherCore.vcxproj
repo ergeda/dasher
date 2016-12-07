@@ -142,6 +142,7 @@
     <ClCompile Include="DasherModule.cpp" />
     <ClCompile Include="DasherNode.cpp" />
     <ClCompile Include="DasherView.cpp" />
+    <ClCompile Include="DasherViewDial.cpp" />
     <ClCompile Include="DasherViewSquare.cpp" />
     <ClCompile Include="DashIntfScreenMsgs.cpp" />
     <ClCompile Include="DashIntfSettings.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="DasherScreen.h" />
     <ClInclude Include="DasherTypes.h" />
     <ClInclude Include="DasherView.h" />
+    <ClInclude Include="DasherViewDial.h" />
     <ClInclude Include="DasherViewSquare.h" />
     <ClInclude Include="DashIntfScreenMsgs.h" />
     <ClInclude Include="DashIntfSettings.h" />
@@ -249,7 +251,6 @@
     <ClInclude Include="Messages.h" />
     <ClInclude Include="ModuleManager.h" />
     <ClInclude Include="NodeCreationManager.h" />
-    <ClInclude Include="NodeQueue.h" />
     <ClInclude Include="OneButtonDynamicFilter.h" />
     <ClInclude Include="OneButtonFilter.h" />
     <ClInclude Include="OneDimensionalFilter.h" />
@@ -278,6 +279,7 @@
     <ClInclude Include="XMLUtil.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DasherViewDial.inl" />
     <None Include="DasherViewSquare.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

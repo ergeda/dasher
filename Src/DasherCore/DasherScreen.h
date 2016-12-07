@@ -85,6 +85,8 @@ public:
     ///Delete the label. This should free up any resources associated with
     /// drawing the string onto the screen, e.g. layouts or textures.
     virtual ~Label() {}
+    // (disgusting) upper/lowercase toggle
+    bool m_uppercase;
   };
 
   ///Make a label for use with this screen.
@@ -130,6 +132,8 @@ public:
   /// \param iLineColour colour to draw outline; -1 = use default
   /// \param iLineWidth line width for outline; <1 for no outline
   virtual void DrawCircle(screenint iCX, screenint iCY, screenint iR, int iFillColour, int iLineColour, int iLineWidth) = 0;
+
+  virtual void DrawSolidArc(screenint iCX, screenint iCY, screenint iR, double dStartAngle, double dSweepAngle, int iFillColour, int iLineColour, int iLineWidth) = 0;
 
   /// Draw a line of fixed colour (usually black). Intended for static UI elements such as a cross-hair
   /// Draw a line between each of the points in the array

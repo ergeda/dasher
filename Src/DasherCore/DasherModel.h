@@ -190,6 +190,17 @@ class Dasher::CDasherModel: public Observable<CDasherNode*>, private NoClones
   /// Create the children of a Dasher node
   void ExpandNode(CDasherNode * pNode);
 
+  ///
+  /// Make a child of the root into a new root
+  ///
+  void Make_root(CDasherNode *pNewRoot);
+
+  ///
+  /// Make the parent of the current root into the new root (rebuilding if necessary) - used during backing off
+  /// Return true if successful, false if couldn't.
+  ///
+  bool Reparent_root();
+
  private:
 
   // The root of the Dasher tree
@@ -235,17 +246,6 @@ class Dasher::CDasherModel: public Observable<CDasherNode*>, private NoClones
   // Information entered so far in this model
   double m_dTotalNats;
 
-  ///
-  /// Make a child of the root into a new root
-  ///
-
-  void Make_root(CDasherNode *pNewRoot);
-
-  ///
-  /// Make the parent of the current root into the new root (rebuilding if necessary) - used during backing off
-  /// Return true if successful, false if couldn't.
-  ///
-  bool Reparent_root();
 
   /// Handle the output caused by a change in node over the crosshair. Specifically,
   /// deletes from m_pLastOutput back to closest ancestor of pNewNode,

@@ -8,6 +8,7 @@
 #include "Common\WinUTF8.h"
 #include "Widgets/Canvas.h"
 #include "DasherMouseInput.h"
+#include "DasherXboxInput.h"
 #include "DasherWindow.h"
 #include "Widgets/Edit.h"
 
@@ -59,7 +60,8 @@ void CDasher::CreateModules() {
   CDasherInterfaceBase::CreateModules();
   RegisterModule(new CSocketInput(this,this));
   RegisterModule(new CBTSocketInput());
-  RegisterModule(new CDasherMouseInput(m_pCanvas->getwindow()));
+  //RegisterModule(new CDasherMouseInput(m_pCanvas->getwindow()));
+  RegisterModule(new CDasherXboxInput(m_pCanvas->getwindow()));
 }
 
 void CDasher::Main() {
@@ -334,12 +336,24 @@ void CDasher::CopyToClipboard(const string &strText) {
 std::string CDasher::GetAllContext() {
   CString wideText;
   m_pEdit->GetWindowText(wideText);
+
+  // TODO: disgusting hack to workaround upper/lowercase toggle
+  for (int i = 0; i < wideText.GetLength(); ++i) {
+      if (wideText[i] >= 'A' && wideText[i] <= 'Z') wideText.SetAt(i, wideText[i] - 'A' + 'a');
+  }
+
   return WinUTF8::wstring_to_UTF8string(wideText);
 }
 
 std::string CDasher::GetContext(unsigned int iStart, unsigned int iLength) {
   CString wideText;
   m_pEdit->GetWindowText(wideText);
+
+  // TODO: disgusting hack to workaround upper/lowercase toggle
+  for (int i = 0; i < wideText.GetLength(); ++i) {
+      if (wideText[i] >= 'A' && wideText[i] <= 'Z') wideText.SetAt(i, wideText[i] - 'A' + 'a');
+  }
+
   return WinUTF8::wstring_to_UTF8string(wideText.Mid(iStart, iLength));
 }
 

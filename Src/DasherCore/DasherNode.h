@@ -159,13 +159,13 @@ class Dasher::CDasherNode:private NoClones {
   ///
   /// @return The lower bound
   ///
-  inline unsigned int Lbnd() const;
+  inline unsigned int& Lbnd();
 
   /// @brief Get the upper bound of a node
   ///
   /// @return The upper bound
   ///
-  inline unsigned int Hbnd() const;
+  inline unsigned int& Hbnd();
 
   /// @brief Get the range of a node (upper - lower bound)
   ///
@@ -275,6 +275,13 @@ class Dasher::CDasherNode:private NoClones {
     throw "Hack for pre-MandarinDasher ConversionManager::BuildTree method, needs to access CAlphabetManager-private struct";
   }
 
+  void Toggle(bool uppercase) {
+      if (m_pLabel) m_pLabel->m_uppercase = uppercase;
+      m_uppercase = uppercase;
+  }
+
+  bool UpperCase() const { return m_uppercase; }
+
   /// @}
 
  private:
@@ -290,6 +297,9 @@ class Dasher::CDasherNode:private NoClones {
   int m_iFlags;
 
   int m_iOffset;
+
+  // hack for upper/lower case toggle
+  bool m_uppercase;
 
  protected:
   const int m_iColour;
@@ -309,11 +319,11 @@ namespace Dasher {
 
 namespace Dasher {
 
-inline unsigned int CDasherNode::Lbnd() const {
+inline unsigned int& CDasherNode::Lbnd() {
   return m_iLbnd;
 }
 
-inline unsigned int CDasherNode::Hbnd() const {
+inline unsigned int& CDasherNode::Hbnd() {
   return m_iHbnd;
 }
 

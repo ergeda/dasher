@@ -131,10 +131,10 @@ CDasherScreen::Label *CScreen::MakeLabel(const string &strText, unsigned int iWr
 void CScreen::DrawString(CDasherScreen::Label *lab, screenint x1, screenint y1, unsigned int iSize, int Colour) {
   Label *label(static_cast<Label *>(lab));
   RECT Rect;
-  Rect.left = x1;
-  Rect.top = y1;
-  Rect.right = x1 + (lab->m_iWrapSize ? GetWidth() : 50); //if not wrapping, will extend beyond RHS because of DT_NOCLIP
-  Rect.bottom = y1 + 50; //and beyond bottom in either case
+  Rect.left = x1 - 15;
+  Rect.top = y1 - 15;
+  Rect.right = x1 + 15; //if not wrapping, will extend beyond RHS because of DT_NOCLIP
+  Rect.bottom = y1 + 15; //and beyond bottom in either case
 
   HFONT old = (HFONT) SelectObject(m_hDCBuffer, CScreen::GetFont(iSize));
 
@@ -146,8 +146,21 @@ void CScreen::DrawString(CDasherScreen::Label *lab, screenint x1, screenint y1, 
   
   iCRefOld = SetTextColor(m_hDCBuffer, iCRefNew);
 
+  // TODO: disgusting hack for case toggling
+  Tstring text = label->m_OutputText;
+  if (label->m_uppercase) {
+      for (int i = 0; i < text.length(); ++i) {
+          if (text[i] >= 'a' && text[i] <= 'z') text[i] -= 'a' - 'A';
+      }
+  }
+  else {
+      for (int i = 0; i < text.length(); ++i) {
+          if (text[i] >= 'A' && text[i] <= 'Z') text[i] -= 'A' - 'a';
+      }
+  }
+
   // The Windows API dumps all its function names in the global namespace, ::
-  ::DrawText(m_hDCBuffer, label->m_OutputText.c_str(), label->m_OutputText.size(), &Rect, (label->m_iWrapSize ? DT_CENTER | DT_WORDBREAK : DT_LEFT | DT_SINGLELINE) | DT_TOP | DT_NOCLIP | DT_NOPREFIX);
+  ::DrawText(m_hDCBuffer, text.c_str(), text.size(), &Rect, DT_CENTER | DT_VCENTER);
   
   SetTextColor(m_hDCBuffer, iCRefOld);
   SelectObject(m_hDCBuffer, old);
