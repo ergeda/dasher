@@ -50,7 +50,7 @@ bool CDefaultFilter::DecorateView(CDasherView *pView, CDasherInput *pInput) {
 
   if(GetBoolParameter(BP_DRAW_MOUSE)) {
     //Draw a small box at the current mouse position
-    pView->DasherDrawCentredRectangle(m_iLastX, m_iLastY, 5, 2, false);
+    //pView->DasherDrawCentredRectangle(m_iLastX, m_iLastY, 5, 2, false);
 
     bDidSomething = true;
   }
@@ -68,13 +68,13 @@ bool CDefaultFilter::DecorateView(CDasherView *pView, CDasherInput *pInput) {
     // point we'll actually head to.
     x[1] = max(myint(1),m_iLastX);
     y[1] = m_iLastY;
-
+/*
     // Actually plot the line
     if (GetBoolParameter(BP_CURVE_MOUSE_LINE))
       pView->DasherSpaceLine(x[0],y[0],x[1],y[1], GetLongParameter(LP_LINE_WIDTH), 1);
     else
       pView->DasherPolyline(x, y, 2, GetLongParameter(LP_LINE_WIDTH), 1);
-
+*/
   /*  // Plot a brachistochrone
 
   const int noOfPoints = 18;
