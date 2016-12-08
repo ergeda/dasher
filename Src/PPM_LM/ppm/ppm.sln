@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ppm", "ppm\ppm.vcproj", "{2E14C7BE-2D95-4431-B1C2-DA56926FCFC3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3} = {7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DasherCore", "DasherCore\DasherCore.vcproj", "{59089850-3E3F-45D3-B03A-746DC8E95B3B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcproj", "{7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E14C7BE-2D95-4431-B1C2-DA56926FCFC3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2E14C7BE-2D95-4431-B1C2-DA56926FCFC3}.Debug|Win32.Build.0 = Debug|Win32
+		{2E14C7BE-2D95-4431-B1C2-DA56926FCFC3}.Release|Win32.ActiveCfg = Release|Win32
+		{2E14C7BE-2D95-4431-B1C2-DA56926FCFC3}.Release|Win32.Build.0 = Release|Win32
+		{59089850-3E3F-45D3-B03A-746DC8E95B3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{59089850-3E3F-45D3-B03A-746DC8E95B3B}.Debug|Win32.Build.0 = Debug|Win32
+		{59089850-3E3F-45D3-B03A-746DC8E95B3B}.Release|Win32.ActiveCfg = Release|Win32
+		{59089850-3E3F-45D3-B03A-746DC8E95B3B}.Release|Win32.Build.0 = Release|Win32
+		{7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3}.Debug|Win32.Build.0 = Debug|Win32
+		{7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3}.Release|Win32.ActiveCfg = Release|Win32
+		{7F597E54-CCDC-4BBB-B08D-6FBB12F2A2A3}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
