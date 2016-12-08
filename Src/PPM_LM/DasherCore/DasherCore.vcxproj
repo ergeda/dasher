@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{59089850-3E3F-45D3-B03A-746DC8E95B3B}</ProjectGuid>
+    <RootNamespace>DasherCore</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(EXPAT)\Source\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(EXPAT)\Source\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalDependencies>imm32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{7f597e54-ccdc-4bbb-b08d-6fbb12f2a2a3}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ActionButton.cpp" />
+    <ClCompile Include="Alphabet\Alphabet.cpp" />
+    <ClCompile Include="AlphabetManager.cpp" />
+    <ClCompile Include="Alphabet\AlphabetMap.cpp" />
+    <ClCompile Include="Alphabet\AlphIO.cpp" />
+    <ClCompile Include="AlternatingDirectMode.cpp" />
+    <ClCompile Include="AutoSpeedControl.cpp" />
+    <ClCompile Include="BasicLog.cpp" />
+    <ClCompile Include="LanguageModelling\BigramLanguageModel.cpp" />
+    <ClCompile Include="ButtonMode.cpp" />
+    <ClCompile Include="ButtonMultiPress.cpp" />
+    <ClCompile Include="CircleStartHandler.cpp" />
+    <ClCompile Include="ClickFilter.cpp" />
+    <ClCompile Include="ColourIO.cpp" />
+    <ClCompile Include="CompassMode.cpp" />
+    <ClCompile Include="ControlManager.cpp" />
+    <ClCompile Include="ConversionHelper.cpp" />
+    <ClCompile Include="ConversionManager.cpp" />
+    <ClCompile Include="LanguageModelling\CTWLanguageModel.cpp" />
+    <ClCompile Include="DasherButtons.cpp" />
+    <ClCompile Include="DasherComponent.cpp" />
+    <ClCompile Include="DasherGameMode.cpp" />
+    <ClCompile Include="DasherInterfaceBase.cpp" />
+    <ClCompile Include="DasherModel.cpp" />
+    <ClCompile Include="DasherModule.cpp" />
+    <ClCompile Include="DasherNode.cpp" />
+    <ClCompile Include="DasherView.cpp" />
+    <ClCompile Include="DasherViewSquare.cpp" />
+    <ClCompile Include="DefaultFilter.cpp" />
+    <ClCompile Include="DelayedDraw.cpp" />
+    <ClCompile Include="LanguageModelling\DictLanguageModel.cpp" />
+    <ClCompile Include="DynamicFilter.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
+    <ClCompile Include="ExpansionPolicy.cpp" />
+    <ClCompile Include="EyetrackerFilter.cpp" />
+    <ClCompile Include="FileLogger.cpp" />
+    <ClCompile Include="FrameRate.cpp" />
+    <ClCompile Include="GameLevel.cpp" />
+    <ClCompile Include="GameScorer.cpp" />
+    <ClCompile Include="GnomeSettingsStore.cpp" />
+    <ClCompile Include="LanguageModelling\HashTable.cpp" />
+    <ClCompile Include="IMEConversionHelper.cpp" />
+    <ClCompile Include="LanguageModelling\LanguageModel.cpp" />
+    <ClCompile Include="MandarinAlphMgr.cpp" />
+    <ClCompile Include="MemoryLeak.cpp" />
+    <ClCompile Include="ModuleManager.cpp" />
+    <ClCompile Include="NodeCreationManager.cpp" />
+    <ClCompile Include="OneButtonDynamicFilter.cpp" />
+    <ClCompile Include="OneButtonFilter.cpp" />
+    <ClCompile Include="OneDimensionalFilter.cpp" />
+    <ClCompile Include="PinYinConversionHelper.cpp" />
+    <ClCompile Include="PinyinParser.cpp" />
+    <ClCompile Include="LanguageModelling\PPMLanguageModel.cpp" />
+    <ClCompile Include="LanguageModelling\PPMPYLanguageModel.cpp" />
+    <ClCompile Include="SCENode.cpp" />
+    <ClCompile Include="SettingsStore.cpp" />
+    <ClCompile Include="SimpleTimer.cpp" />
+    <ClCompile Include="SocketInputBase.cpp" />
+    <ClCompile Include="StylusFilter.cpp" />
+    <ClCompile Include="TimeSpan.cpp" />
+    <ClCompile Include="Trainer.cpp" />
+    <ClCompile Include="TrainingHelper.cpp" />
+    <ClCompile Include="TwoBoxStartHandler.cpp" />
+    <ClCompile Include="TwoButtonDynamicFilter.cpp" />
+    <ClCompile Include="TwoPushDynamicFilter.cpp" />
+    <ClCompile Include="UserButton.cpp" />
+    <ClCompile Include="UserLocation.cpp" />
+    <ClCompile Include="UserLog.cpp" />
+    <ClCompile Include="UserLogParam.cpp" />
+    <ClCompile Include="UserLogTrial.cpp" />
+    <ClCompile Include="WinHelper.cpp" />
+    <ClCompile Include="WinLocalisation.cpp" />
+    <ClCompile Include="WinOptions.cpp" />
+    <ClCompile Include="WinUTF8.cpp" />
+    <ClCompile Include="LanguageModelling\WordLanguageModel.cpp" />
+    <ClCompile Include="XMLUtil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ActionButton.h" />
+    <ClInclude Include="Alphabet\Alphabet.h" />
+    <ClInclude Include="AlphabetManager.h" />
+    <ClInclude Include="Alphabet\AlphabetMap.h" />
+    <ClInclude Include="Alphabet\AlphIO.h" />
+    <ClInclude Include="AlternatingDirectMode.h" />
+    <ClInclude Include="AutoSpeedControl.h" />
+    <ClInclude Include="BasicLog.h" />
+    <ClInclude Include="LanguageModelling\BigramLanguageModel.h" />
+    <ClInclude Include="ButtonMode.h" />
+    <ClInclude Include="ButtonMultiPress.h" />
+    <ClInclude Include="CannaConversionHelper.h" />
+    <ClInclude Include="CircleStartHandler.h" />
+    <ClInclude Include="ClickFilter.h" />
+    <ClInclude Include="ColourIO.h" />
+    <ClInclude Include="CompassMode.h" />
+    <ClInclude Include="ControlManager.h" />
+    <ClInclude Include="ConversionHelper.h" />
+    <ClInclude Include="ConversionManager.h" />
+    <ClInclude Include="LanguageModelling\CTWLanguageModel.h" />
+    <ClInclude Include="DasherButtons.h" />
+    <ClInclude Include="DasherComponent.h" />
+    <ClInclude Include="DasherGameMode.h" />
+    <ClInclude Include="DasherInput.h" />
+    <ClInclude Include="DasherInterfaceBase.h" />
+    <ClInclude Include="DasherModel.h" />
+    <ClInclude Include="DasherModule.h" />
+    <ClInclude Include="DasherNode.h" />
+    <ClInclude Include="DasherScreen.h" />
+    <ClInclude Include="DasherTypes.h" />
+    <ClInclude Include="DasherView.h" />
+    <ClInclude Include="DasherViewSquare.h" />
+    <ClInclude Include="DefaultFilter.h" />
+    <ClInclude Include="View\DelayedDraw.h" />
+    <ClInclude Include="LanguageModelling\DictLanguageModel.h" />
+    <ClInclude Include="DynamicFilter.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="ExpansionPolicy.h" />
+    <ClInclude Include="EyetrackerFilter.h" />
+    <ClInclude Include="FileLogger.h" />
+    <ClInclude Include="FrameRate.h" />
+    <ClInclude Include="GameLevel.h" />
+    <ClInclude Include="GameMessages.h" />
+    <ClInclude Include="GameScorer.h" />
+    <ClInclude Include="GameStatistics.h" />
+    <ClInclude Include="GnomeSettingsStore.h" />
+    <ClInclude Include="Alphabet\GroupInfo.h" />
+    <ClInclude Include="LanguageModelling\HashTable.h" />
+    <ClInclude Include="IMEConversionHelper.h" />
+    <ClInclude Include="InputFilter.h" />
+    <ClInclude Include="LanguageModelling\LanguageModel.h" />
+    <ClInclude Include="MandarinAlphMgr.h" />
+    <ClInclude Include="MemoryLeak.h" />
+    <ClInclude Include="LanguageModelling\MixtureLanguageModel.h" />
+    <ClInclude Include="ModuleManager.h" />
+    <ClInclude Include="NodeCreationManager.h" />
+    <ClInclude Include="OneButtonDynamicFilter.h" />
+    <ClInclude Include="OneButtonFilter.h" />
+    <ClInclude Include="OneDimensionalFilter.h" />
+    <ClInclude Include="Parameters.h" />
+    <ClInclude Include="PinYinConversionHelper.h" />
+    <ClInclude Include="PinyinParser.h" />
+    <ClInclude Include="LanguageModelling\PPMLanguageModel.h" />
+    <ClInclude Include="LanguageModelling\PPMPYLanguageModel.h" />
+    <ClInclude Include="SCENode.h" />
+    <ClInclude Include="SettingsStore.h" />
+    <ClInclude Include="SimpleTimer.h" />
+    <ClInclude Include="SocketInput.h" />
+    <ClInclude Include="SocketInputBase.h" />
+    <ClInclude Include="StartHandler.h" />
+    <ClInclude Include="StylusFilter.h" />
+    <ClInclude Include="LanguageModelling\SymbolAlphabet.h" />
+    <ClInclude Include="TimeSpan.h" />
+    <ClInclude Include="Trainer.h" />
+    <ClInclude Include="TrainingHelper.h" />
+    <ClInclude Include="TwoBoxStartHandler.h" />
+    <ClInclude Include="TwoButtonDynamicFilter.h" />
+    <ClInclude Include="TwoPushDynamicFilter.h" />
+    <ClInclude Include="UserButton.h" />
+    <ClInclude Include="UserLocation.h" />
+    <ClInclude Include="UserLog.h" />
+    <ClInclude Include="UserLogBase.h" />
+    <ClInclude Include="UserLogParam.h" />
+    <ClInclude Include="UserLogTrial.h" />
+    <ClInclude Include="WinHelper.h" />
+    <ClInclude Include="WinLocalisation.h" />
+    <ClInclude Include="winoptions.h" />
+    <ClInclude Include="WinUTF8.h" />
+    <ClInclude Include="LanguageModelling\WordLanguageModel.h" />
+    <ClInclude Include="XMLUtil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DasherViewSquare.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
