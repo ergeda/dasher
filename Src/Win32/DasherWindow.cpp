@@ -31,6 +31,12 @@
 
 #include <Htmlhelp.h>
 
+#include <atlimage.h>
+#include <atlbase.h>
+#include <atlwin.h>
+#include <gdiplusbase.h>
+#include <gdiplus.h> 
+
 using namespace Dasher;
 using namespace std;
 
@@ -96,11 +102,11 @@ HWND CDasherWindow::Create() {
   HWND hWnd;
 
   if (iStyle == APP_STYLE_DIRECT) {
-    hWnd = CWindowImpl<CDasherWindow >::Create(NULL, NULL, WindowTitle.c_str(), (WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX, WS_EX_NOACTIVATE | WS_EX_APPWINDOW | WS_EX_TOPMOST);
+    hWnd = CWindowImpl<CDasherWindow>::Create(NULL, NULL, WindowTitle.c_str(), (WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX, WS_EX_NOACTIVATE | WS_EX_APPWINDOW | WS_EX_TOPMOST | WS_EX_LAYERED);
     ::SetMenu(hWnd, NULL);
   }
   else {
-    hWnd = CWindowImpl<CDasherWindow >::Create(NULL, NULL, WindowTitle.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN);
+    hWnd = CWindowImpl<CDasherWindow>::Create(NULL, NULL, WindowTitle.c_str(), WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN);
     ::SetMenu(hWnd, m_hMenu);
   }
 

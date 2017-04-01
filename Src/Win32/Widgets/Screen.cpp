@@ -33,6 +33,10 @@ CScreen::CScreen(HDC hdc, HWND hWnd, Dasher::screenint iWidth, Dasher::screenint
 
   CreateBuffers();
   SetFont(strFont);
+
+  m_img.Create(600, 600, 32, CImage::createAlphaChannel);
+  m_graphics = Gdiplus::Graphics::FromHDC(m_img.GetDC());
+  m_graphics->SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
 }
 
 void CScreen::CreateBuffers() {
@@ -56,6 +60,8 @@ void CScreen::CreateBuffers() {
 
 CScreen::~CScreen() {
   DeleteBuffers();
+  m_img.ReleaseDC();
+  delete m_graphics;
 }
 
 void CScreen::DeleteBuffers() {
@@ -129,41 +135,63 @@ CDasherScreen::Label *CScreen::MakeLabel(const string &strText, unsigned int iWr
 }
 
 void CScreen::DrawString(CDasherScreen::Label *lab, screenint x1, screenint y1, unsigned int iSize, int Colour) {
-  Label *label(static_cast<Label *>(lab));
-  RECT Rect;
-  Rect.left = x1 - 15;
-  Rect.top = y1 - 15;
-  Rect.right = x1 + 15; //if not wrapping, will extend beyond RHS because of DT_NOCLIP
-  Rect.bottom = y1 + 15; //and beyond bottom in either case
+    /*
+    Label *label(static_cast<Label *>(lab));
+    RECT Rect;
+    Rect.left = x1 - 15;
+    Rect.top = y1 - 15;
+    Rect.right = x1 + 15; //if not wrapping, will extend beyond RHS because of DT_NOCLIP
+    Rect.bottom = y1 + 15; //and beyond bottom in either case
 
-  HFONT old = (HFONT) SelectObject(m_hDCBuffer, CScreen::GetFont(iSize));
+    HFONT old = (HFONT) SelectObject(m_hDCBuffer, CScreen::GetFont(iSize));
 
-  COLORREF iCRefOld;
-  COLORREF iCRefNew;
+    COLORREF iCRefOld;
+    COLORREF iCRefNew;
 
-  // Colour was hardcoded to 4
-  iCRefNew = RGB(m_pColours->Reds[Colour], m_pColours->Greens[Colour], m_pColours->Blues[Colour]);
-  
-  iCRefOld = SetTextColor(m_hDCBuffer, iCRefNew);
+    // Colour was hardcoded to 4
+    iCRefNew = RGB(m_pColours->Reds[Colour], m_pColours->Greens[Colour], m_pColours->Blues[Colour]);
 
-  // TODO: disgusting hack for case toggling
-  Tstring text = label->m_OutputText;
-  if (label->m_uppercase) {
-      for (int i = 0; i < text.length(); ++i) {
-          if (text[i] >= 'a' && text[i] <= 'z') text[i] -= 'a' - 'A';
-      }
-  }
-  else {
-      for (int i = 0; i < text.length(); ++i) {
-          if (text[i] >= 'A' && text[i] <= 'Z') text[i] -= 'A' - 'a';
-      }
-  }
+    iCRefOld = SetTextColor(m_hDCBuffer, iCRefNew);
 
-  // The Windows API dumps all its function names in the global namespace, ::
-  ::DrawText(m_hDCBuffer, text.c_str(), text.size(), &Rect, DT_CENTER | DT_VCENTER);
-  
-  SetTextColor(m_hDCBuffer, iCRefOld);
-  SelectObject(m_hDCBuffer, old);
+    // TODO: disgusting hack for case toggling
+    Tstring text = label->m_OutputText;
+    if (label->m_uppercase) {
+    for (int i = 0; i < text.length(); ++i) {
+    if (text[i] >= 'a' && text[i] <= 'z') text[i] -= 'a' - 'A';
+    }
+    }
+    else {
+    for (int i = 0; i < text.length(); ++i) {
+    if (text[i] >= 'A' && text[i] <= 'Z') text[i] -= 'A' - 'a';
+    }
+    }
+
+    // The Windows API dumps all its function names in the global namespace, ::
+    ::DrawText(m_hDCBuffer, text.c_str(), text.size(), &Rect, DT_CENTER | DT_VCENTER);
+
+    SetTextColor(m_hDCBuffer, iCRefOld);
+    SelectObject(m_hDCBuffer, old);
+    */
+
+    Label *label(static_cast<Label *>(lab));
+    // TODO: disgusting hack for case toggling
+    Tstring text = label->m_OutputText;
+    if (label->m_uppercase) {
+        for (int i = 0; i < text.length(); ++i) {
+            if (text[i] >= 'a' && text[i] <= 'z') text[i] -= 'a' - 'A';
+        }
+    }
+    else {
+        for (int i = 0; i < text.length(); ++i) {
+            if (text[i] >= 'A' && text[i] <= 'Z') text[i] -= 'A' - 'a';
+        }
+    }
+    
+    m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceOver);
+    Gdiplus::Font font(L"Arial", iSize-6); // dirty hack
+    Gdiplus::PointF origin(x1-9, y1-15);
+    Gdiplus::SolidBrush brush(Gdiplus::Color(255, m_pColours->Reds[Colour], m_pColours->Greens[Colour], m_pColours->Blues[Colour]));
+    m_graphics->DrawString(text.c_str(), text.length(), &font, origin, &brush);
 }
 
 pair<screenint,screenint> CScreen::TextSize(CDasherScreen::Label *lab, unsigned int iSize) {
@@ -210,16 +238,38 @@ pair<screenint,screenint> CScreen::TextSize_Impl(CScreen::Label *label, unsigned
 
 /////////////////////////////////////////////////////////////////////////////
 void CScreen::Polygon(point *Points, int Number, int fillColour, int outlineColour, int iWidth) {
-  HGDIOBJ hpOld;
-  hpOld = (HPEN) SelectObject(m_hDCBuffer, CScreen::GetPen(fillColour, iWidth));
-  POINT *WinPoints = new POINT[Number];
-  point2POINT(Points, WinPoints, Number);
-  ::Polygon(m_hDCBuffer, WinPoints, Number);
-  delete[]WinPoints;
-  SelectObject(m_hDCBuffer, hpOld);
-  if (iWidth>0) {
+    /*
+    HGDIOBJ hpOld;
+    hpOld = (HPEN) SelectObject(m_hDCBuffer, CScreen::GetPen(fillColour, iWidth));
+    POINT *WinPoints = new POINT[Number];
+    point2POINT(Points, WinPoints, Number);
+    ::Polygon(m_hDCBuffer, WinPoints, Number);
+    delete[]WinPoints;
+    SelectObject(m_hDCBuffer, hpOld);
+    if (iWidth>0) {
     Polyline(Points, Number, iWidth, outlineColour==-1 ? 3 : outlineColour);
-  }
+    }
+    */
+
+    m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceOver);
+    Gdiplus::Pen pen(Gdiplus::Color(255, 0, 0, 0), iWidth);
+    Gdiplus::Point points[3];
+    for (int i = 0; i < 3; ++i) {
+        points[i].X = Points[i].x;
+        points[i].Y = Points[i].y;
+    }
+    m_graphics->DrawPolygon(&pen, points, 3);
+
+    // irregular shaped window
+    POINT pt = { 0, 0 };
+    SIZE size = { m_img.GetWidth(), m_img.GetHeight() };
+    BLENDFUNCTION bf = { 0 };
+    bf.BlendOp = AC_SRC_OVER;
+    bf.BlendFlags = 0;
+    bf.AlphaFormat = AC_SRC_ALPHA;
+    bf.SourceConstantAlpha = 255;
+    UpdateLayeredWindow(GetParent(m_hWnd), 0, 0, &size, m_img.GetDC(), &pt, 0, &bf, ULW_ALPHA);
+    m_img.ReleaseDC();
 }
 
 /////////////////////////////////////////////////////////////////////////////

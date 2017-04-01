@@ -19,6 +19,11 @@
 #include <map>
 #include <unordered_map>
 
+#include <atlimage.h>
+#include <atlbase.h>
+#include <gdiplusbase.h>
+#include <gdiplus.h>
+
 /////////////////////////////////////////////////////////////////////////////
 
 class CScreen:public Dasher::CLabelListScreen, private NoClones {
@@ -112,6 +117,11 @@ private:
   };
 
   std::pair<screenint,screenint> TextSize_Impl(CScreen::Label *label, unsigned int Size);
+
+  // image
+  CImage m_img;
+  // graphics
+  Gdiplus::Graphics* m_graphics;
 };
 
 #include "Screen.inl"
