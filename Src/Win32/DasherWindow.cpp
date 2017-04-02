@@ -497,6 +497,11 @@ LRESULT CDasherWindow::OnWindowPosChanged(UINT message, WPARAM wParam, LPARAM lP
   return 1;
 }
 
+// support drag client area to move, however it doesn't work as expected.
+LRESULT CDasherWindow::OnNCHitTest(UINT message, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+    return HTCAPTION;
+}
+
 void CDasherWindow::HandleWinEvent(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
   if (!m_bFullyCreated)
     return;
