@@ -155,7 +155,7 @@ void CDasherViewDial::WorkaroundTinyRange(CDasherNode *pRoot) {
     }
 }
 
-#if 1 // pointer mode
+#if 0 // pointer mode
 CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint iRootMax, CExpansionPolicy &policy) {
     DASHER_ASSERT(pRoot != 0);
 
@@ -313,7 +313,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
 }
 #endif
 
-#if 0 // rotate mode
+#if 1 // rotate mode
 CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint iRootMax, CExpansionPolicy &policy) {
     DASHER_ASSERT(pRoot != 0);
     
@@ -335,6 +335,9 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     const screenint selected_line_thickness = 4;
     const int line_color = 1; // gray
     const int selected_line_color = 2; // dark
+
+    // pointer location
+    double pointer_offset = 135; // 135
     
     // start angle offset
     screenint mouse_x, mouse_y;
@@ -367,8 +370,8 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     CDasherNode *pLevel1 = pDefault;
     int offset = CDasherModel::NORMALIZATION - (pLevel1->Lbnd() + pLevel1->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
-        double lbnd = ((*I)->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset - 360;
-        double hbnd = ((*I)->Hbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset - 360;
+        double lbnd = ((*I)->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset -360 - m_offset;
+        double hbnd = ((*I)->Hbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset -360 - m_offset;
         if (hbnd < 0) { lbnd += 360; hbnd += 360; }
         if (lbnd > 0) { lbnd -= 360; hbnd -= 360; }
         if (lbnd <= 0 && hbnd >= 0) { pLevel1 = *I; break; }
@@ -396,7 +399,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
         Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness);
 
@@ -417,7 +420,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     offset = CDasherModel::NORMALIZATION -(pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
         Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness);
 
@@ -438,7 +441,7 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     offset = CDasherModel::NORMALIZATION -(pDefault->Lbnd() + pDefault->Hbnd()) / 2;
     for (CDasherNode::ChildMap::const_iterator I = pRoot->GetChildren().begin(), E = pRoot->GetChildren().end(); I != E; ++I) {
         CDasherNode *pChild = *I;
-        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
+        double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset + pointer_offset - m_offset;
         double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
         if (pChild == pLevel1) { selected_startAngle = startAngle; selected_sweepAngle = sweepAngle; selected_color_index = count; }
         else Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count, line_color, line_thickness);
@@ -455,13 +458,12 @@ CDasherNode *CDasherViewDial::Render(CDasherNode *pRoot, myint iRootMin, myint i
     Screen()->DrawString(pLevel1->getLabel(), selected_label_x, selected_label_y, 26, 2);
     // inner most white cover
     Screen()->DrawCircle(origin_x, origin_y, dial_radius, 0, selected_line_color, selected_line_thickness);
-    
-    // Pointer
+
     CDasherScreen::point p[4];
-    p[0].x = origin_x + 200 - 40; p[0].y = origin_y;
-    p[1].x = origin_x + 200 - 40 - 25; p[1].y = origin_y - 12;
-    p[2].x = origin_x + 200 - 40 - 25; p[2].y = origin_y + 12;
-    p[3].x = origin_x + 200 - 40; p[3].y = origin_y;
+    p[0].x = origin_x + dial_radius*cos(pointer_offset * PI / 180); p[0].y = origin_y - dial_radius*sin(pointer_offset * PI / 180);
+    p[1].x = origin_x + (dial_radius - 25)*cos(pointer_offset * PI / 180) - 12 * sin(pointer_offset * PI / 180); p[1].y = origin_y - 12 * cos(pointer_offset * PI / 180) - (dial_radius - 25)*sin(pointer_offset * PI / 180);
+    p[2].x = origin_x + (dial_radius - 25)*cos(pointer_offset * PI / 180) + 12 * sin(pointer_offset * PI / 180); p[2].y = origin_y + 12 * cos(pointer_offset * PI / 180) - (dial_radius - 25)*sin(pointer_offset * PI / 180);
+    p[3].x = p[0].x; p[3].y = p[0].y;
     Screen()->Polygon(p, 4, selected_line_color, selected_line_color, selected_line_thickness);
     
     // update offset
