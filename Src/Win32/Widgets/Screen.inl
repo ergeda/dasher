@@ -91,14 +91,16 @@ inline void CScreen::DrawSolidArc(screenint iCX, screenint iCY, screenint iR, do
     SelectObject(m_hDCBuffer, hpOld);
     */
     
+    int alpha = iFillColour >= (5 + 28 + 28) ? 150 : (iFillColour >= (5 + 28) ? 200 : 255);
+
     Gdiplus::Rect rect;
     rect.X = iCX - iR; rect.Y = iCY - iR; rect.Width = 2*iR; rect.Height = 2*iR;
 
     m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceOver);
-    Gdiplus::SolidBrush brush(Gdiplus::Color(255, m_pColours->Reds[iFillColour], m_pColours->Greens[iFillColour], m_pColours->Blues[iFillColour]));
+    Gdiplus::SolidBrush brush(Gdiplus::Color(alpha, m_pColours->Reds[iFillColour], m_pColours->Greens[iFillColour], m_pColours->Blues[iFillColour]));
     m_graphics->FillPie(&brush, rect, 360 - dStartAngle, -dSweepAngle);
 
-    Gdiplus::Pen pen(Gdiplus::Color(255, m_pColours->Reds[iLineColour], m_pColours->Greens[iLineColour], m_pColours->Blues[iLineColour]), iLineWidth);
+    Gdiplus::Pen pen(Gdiplus::Color(alpha, m_pColours->Reds[iLineColour], m_pColours->Greens[iLineColour], m_pColours->Blues[iLineColour]), iLineWidth);
     m_graphics->DrawPie(&pen, rect, 360 - dStartAngle, -dSweepAngle);
 }
 

@@ -76,15 +76,15 @@ void CColourIO::CreateDefault() {
 
   // dark (alpha = 0.8)
   double alpha = 0.8;
-  Default.Reds.push_back(70 * alpha + (1 - alpha) * 255);
-  Default.Greens.push_back(70 * alpha + (1 - alpha) * 255);
-  Default.Blues.push_back(70 * alpha + (1 - alpha) * 255);
+  Default.Reds.push_back(95);
+  Default.Greens.push_back(95);
+  Default.Blues.push_back(95);
 
   // dark (alpha = 0.4)
   alpha = 0.4;
-  Default.Reds.push_back(70 * alpha + (1 - alpha) * 255);
-  Default.Greens.push_back(70 * alpha + (1 - alpha) * 255);
-  Default.Blues.push_back(70 * alpha + (1 - alpha) * 255);
+  Default.Reds.push_back(120);
+  Default.Greens.push_back(120);
+  Default.Blues.push_back(120);
 
   // color interpolation from red to yellow then to green
   const int channel_max = 240;

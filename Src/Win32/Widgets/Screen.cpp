@@ -251,8 +251,8 @@ void CScreen::Polygon(point *Points, int Number, int fillColour, int outlineColo
     }
     */
 
-    m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceOver);
-    Gdiplus::Pen pen(Gdiplus::Color(255, 0, 0, 0), iWidth);
+    m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
+    Gdiplus::Pen pen(Gdiplus::Color(255, m_pColours->Reds[outlineColour], m_pColours->Greens[outlineColour], m_pColours->Blues[outlineColour]), iWidth);
     Gdiplus::Point points[3];
     for (int i = 0; i < 3; ++i) {
         points[i].X = Points[i].x;
