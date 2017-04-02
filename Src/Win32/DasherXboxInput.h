@@ -16,4 +16,5 @@ private:
   HWND m_hwnd;
   int m_buttonId;
   int m_rightTrigger;
+  int m_leftTrigger;
 };

@@ -177,6 +177,8 @@ public:
   // Returns true if cursor is over visible part of this window.
   virtual bool IsWindowUnderCursor() = 0;
 
+  virtual void MoveWindow(int mode) {}
+
 private:
   //! Width and height of the screen
   screenint m_iWidth, m_iHeight;

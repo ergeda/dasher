@@ -152,6 +152,8 @@ private:
 
   void DasherLine2Screen(myint x1, myint y1, myint x2, myint y2, vector<CDasherScreen::point> &vPoints);
 
+  CDasherNode* RenderWithMode(CDasherNode *pRoot, myint iRootMin, myint iRootMax, CExpansionPolicy &policy, int mode);
+
   bool m_bVisibleRegionValid;
 
   // Called on screen size or orientation changes
@@ -185,6 +187,9 @@ private:
 
   // upper/lowercase indicator
   bool m_uppercase;
+
+  // mode
+  int m_mode;
 };
 /// @}
 #include "DasherViewDial.inl"

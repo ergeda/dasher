@@ -59,7 +59,7 @@ HWND    g_hWnd;
 bool    g_bDeadZoneOn = true;
 
 //-----------------------------------------------------------------------------
-HRESULT UpdateControllerState(int &x, int &y, int& buttonId, int& rightTrigger)
+HRESULT UpdateControllerState(int &x, int &y, int& buttonId, int& rightTrigger, int& leftTrigger)
 {
     DWORD dwResult;
     for (DWORD i = 0; i < MAX_CONTROLLERS; i++)
@@ -73,7 +73,7 @@ HRESULT UpdateControllerState(int &x, int &y, int& buttonId, int& rightTrigger)
             g_Controllers[i].bConnected = false;
     }
 
-    x = 1; y = 0; buttonId = -1; rightTrigger = -1;
+    x = 1; y = 0; buttonId = -1; rightTrigger = -1; leftTrigger = -1;
     // only use the first controller
     DWORD i = 0;
     if (g_Controllers[i].bConnected) {
@@ -99,6 +99,7 @@ HRESULT UpdateControllerState(int &x, int &y, int& buttonId, int& rightTrigger)
         y = g_Controllers[i].state.Gamepad.sThumbLY;
 
         rightTrigger = g_Controllers[i].state.Gamepad.bRightTrigger;
+        leftTrigger = g_Controllers[i].state.Gamepad.bLeftTrigger;
     }
 
     return S_OK;
@@ -115,9 +116,9 @@ CDasherXboxInput::~CDasherXboxInput(void) {
 }
 
 bool CDasherXboxInput::GetScreenCoords(screenint &iX, screenint &iY, CDasherView *pView) {
-    int x, y, buttonId = -1, rightTrigger = -1;
+    int x, y, buttonId = -1, rightTrigger = -1, leftTrigger = -1;
 
-    UpdateControllerState(x, y, buttonId, rightTrigger);
+    UpdateControllerState(x, y, buttonId, rightTrigger, leftTrigger);
     iX = x; iY = y;
 
     if (buttonId != m_buttonId) {
@@ -129,6 +130,11 @@ bool CDasherXboxInput::GetScreenCoords(screenint &iX, screenint &iY, CDasherView
     if (rightTrigger != m_rightTrigger) {
         if (rightTrigger == 255) pView->KeyDown(102); // right trigger (RT)
         m_rightTrigger = rightTrigger;
+    }
+
+    if (leftTrigger != m_leftTrigger) {
+        if (leftTrigger == 255) pView->KeyDown(103); // left trigger (LT)
+        m_leftTrigger = leftTrigger;
     }
 
     return true;

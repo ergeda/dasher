@@ -81,6 +81,7 @@ public:
 
   void RealDisplay(HDC hDC, RECT r);
   void resize(screenint w, screenint h);
+  void MoveWindow(int mode);
 
 private:
   const void point2POINT(const point * In, POINT * Out, int Number);
