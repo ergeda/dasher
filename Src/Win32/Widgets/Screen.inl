@@ -75,7 +75,7 @@ inline void CScreen::DrawCircle(screenint iCX, screenint iCY, screenint iR, int 
     m_graphics->DrawEllipse(&pen, rect);
 }
 
-inline void CScreen::DrawSolidArc(screenint iCX, screenint iCY, screenint iR, double dStartAngle, double dSweepAngle, int iFillColour, int iLineColour, int iLineWidth) {
+inline void CScreen::DrawSolidArc(screenint iCX, screenint iCY, screenint iR, double dStartAngle, double dSweepAngle, int iFillColour, int iLineColour, int iLineWidth, bool focused) {
     /*
     HGDIOBJ hpOld = (HPEN)SelectObject(m_hDCBuffer, GetPen(iLineColour, iLineWidth));
     HBRUSH hBrushOld = (HBRUSH)SelectObject(m_hDCBuffer, CScreen::GetBrush(iFillColour));
@@ -91,7 +91,8 @@ inline void CScreen::DrawSolidArc(screenint iCX, screenint iCY, screenint iR, do
     SelectObject(m_hDCBuffer, hpOld);
     */
     
-    int alpha = iFillColour >= (5 + 28 + 28) ? 150 : (iFillColour >= (5 + 28) ? 200 : 255);
+    int alpha = iFillColour >= (5 + 28 + 28) ? 100 : (iFillColour >= (5 + 28) ? 150 : 255);
+    if (focused) alpha = 255;
 
     Gdiplus::Rect rect;
     rect.X = iCX - iR; rect.Y = iCY - iR; rect.Width = 2*iR; rect.Height = 2*iR;

@@ -290,9 +290,9 @@ void CScreen::MoveWindow(int mode) {
     }
     else if (mode == 1) {
         ::GetWindowRect(GetParent(m_hWnd), &rect); // save
-        ::MoveWindow(GetParent(m_hWnd), (monitor_width - rect.right + rect.left) / 2, monitor_height - (rect.bottom - rect.top)/2, rect.right - rect.left, rect.bottom - rect.top, FALSE);
+        ::MoveWindow(GetParent(m_hWnd), (monitor_width - rect.right + rect.left) / 2, monitor_height - (rect.bottom - rect.top)/2 + 20, rect.right - rect.left, rect.bottom - rect.top, FALSE);
     }
     else {
-        ::MoveWindow(GetParent(m_hWnd), monitor_width - (rect.right - rect.left) / 2, monitor_height - (rect.bottom - rect.top) / 2, rect.right - rect.left, rect.bottom - rect.top, FALSE);
+        ::MoveWindow(GetParent(m_hWnd), monitor_width - (rect.right - rect.left) / 2, monitor_height - (rect.bottom - rect.top) / 2 + 20, rect.right - rect.left, rect.bottom - rect.top, FALSE);
     }
 }
