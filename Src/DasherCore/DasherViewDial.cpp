@@ -58,7 +58,7 @@ static char THIS_FILE[] = __FILE__;
 
 CDasherViewDial::CDasherViewDial(CSettingsUser *pCreateFrom, CDasherScreen *DasherScreen, Opts::ScreenOrientations orient)
 : CDasherView(DasherScreen,orient), CSettingsUserObserver(pCreateFrom), m_Y1(4), m_Y2(0.95 * CDasherModel::MAX_Y), m_Y3(0.05 * CDasherModel::MAX_Y),
-  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0), m_cachedOffset(0), m_uppercase(false), m_mode(0) {
+  m_bVisibleRegionValid(false), m_pSelected(NULL), m_offset(0), m_cachedOffset(0), m_uppercase(false), m_mode(0), m_full(true) {
 
   //Note, nonlinearity parameters set in SetScaleFactor
   ScreenResized(DasherScreen);
@@ -124,6 +124,10 @@ void CDasherViewDial::KeyDown(int iId) {
         // toggle mode
         m_mode = (m_mode + 1) % 3;
         Screen()->MoveWindow(m_mode);
+    }
+    else if (iId == 104) { // left shoulder
+        // toggle full/non-full
+        m_full = !m_full;
     }
 }
 
@@ -246,6 +250,8 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            if (!m_full && pChild != pLevel3) continue;
+
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
             Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel3);
@@ -258,7 +264,7 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         }
 
         // dirty trick to clear level-2's extra drawing
-        Screen()->DrawCircle(origin_x, origin_y, dial_radius + thickness_level0 + thickness_level1, 0, selected_line_color, 0);
+        Screen()->DrawCircle(origin_x, origin_y, dial_radius + thickness_level0 + thickness_level1, 0, selected_line_color, m_full ? 1 : 0);
 
         // Level-1 ring
         count = 5 + 28;
@@ -267,6 +273,8 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            if (!m_full && pChild != pLevel2) continue;
+
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
             Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel2);
@@ -402,6 +410,8 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            if (!m_full && pChild != pLevel3) continue;
+
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
             Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel3);
@@ -414,7 +424,7 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         }
 
         // dirty trick to clear level-2's extra drawing
-        Screen()->DrawCircle(origin_x, origin_y, dial_radius + thickness_level0 + thickness_level1, 0, selected_line_color, 0);
+        Screen()->DrawCircle(origin_x, origin_y, dial_radius + thickness_level0 + thickness_level1, 0, selected_line_color, m_full ? 1 : 0);
 
         // Level-1 ring
         count = 5 + 28;
@@ -423,6 +433,8 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            if (!m_full && pChild != pLevel2) continue;
+
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
             Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel2);
@@ -557,6 +569,8 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            if (!m_full && pChild != pLevel3) continue;
+
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
             Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel3);
@@ -569,7 +583,7 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         }
 
         // dirty trick to clear level-2's extra drawing
-        Screen()->DrawCircle(origin_x, origin_y, dial_radius + thickness_level0 + thickness_level1, 0, selected_line_color, 0);
+        Screen()->DrawCircle(origin_x, origin_y, dial_radius + thickness_level0 + thickness_level1, 0, selected_line_color, m_full ? 1 : 0);
 
         // Level-1 ring
         count = 5 + 28;
@@ -578,6 +592,8 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            if (!m_full && pChild != pLevel2) continue;
+
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
             Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel2);

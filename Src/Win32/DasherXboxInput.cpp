@@ -81,6 +81,7 @@ HRESULT UpdateControllerState(int &x, int &y, int& buttonId, int& rightTrigger, 
 
         if (wButtons & XINPUT_GAMEPAD_A) buttonId = 0;
         else if (wButtons & XINPUT_GAMEPAD_X) buttonId = 2;
+        else if (wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) buttonId = 4;
 
         if (g_bDeadZoneOn)
         {
@@ -124,6 +125,7 @@ bool CDasherXboxInput::GetScreenCoords(screenint &iX, screenint &iY, CDasherView
     if (buttonId != m_buttonId) {
         if (buttonId == 0) pView->KeyDown(100); // A
         else if (buttonId == 2) pView->KeyDown(101); // X
+        else if (buttonId == 4) pView->KeyDown(104); // Left shoulder
         m_buttonId = buttonId;
     }
 

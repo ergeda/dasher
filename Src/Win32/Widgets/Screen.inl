@@ -70,6 +70,8 @@ inline void CScreen::DrawCircle(screenint iCX, screenint iCY, screenint iR, int 
     Gdiplus::SolidBrush brush(Gdiplus::Color(0, m_pColours->Reds[iFillColour], m_pColours->Greens[iFillColour], m_pColours->Blues[iFillColour]));
     m_graphics->FillEllipse(&brush, rect);
 
+    if (iThickness == 0) return;
+
     m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceOver);
     Gdiplus::Pen pen(Gdiplus::Color(255, m_pColours->Reds[iLineColour], m_pColours->Greens[iLineColour], m_pColours->Blues[iLineColour]), iThickness);
     m_graphics->DrawEllipse(&pen, rect);

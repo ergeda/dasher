@@ -190,6 +190,9 @@ private:
 
   // mode
   int m_mode;
+
+  // full
+  bool m_full;
 };
 /// @}
 #include "DasherViewDial.inl"

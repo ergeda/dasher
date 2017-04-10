@@ -252,13 +252,17 @@ void CScreen::Polygon(point *Points, int Number, int fillColour, int outlineColo
     */
 
     m_graphics->SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
-    Gdiplus::Pen pen(Gdiplus::Color(255, m_pColours->Reds[outlineColour], m_pColours->Greens[outlineColour], m_pColours->Blues[outlineColour]), iWidth);
     Gdiplus::Point points[3];
     for (int i = 0; i < 3; ++i) {
         points[i].X = Points[i].x;
         points[i].Y = Points[i].y;
     }
+
+    Gdiplus::SolidBrush brush(Gdiplus::Color(255, m_pColours->Reds[0], m_pColours->Greens[0], m_pColours->Blues[0]));
+    m_graphics->FillPolygon(&brush, points, 3);
+    Gdiplus::Pen pen(Gdiplus::Color(255, m_pColours->Reds[outlineColour], m_pColours->Greens[outlineColour], m_pColours->Blues[outlineColour]), iWidth);
     m_graphics->DrawPolygon(&pen, points, 3);
+    
 
     // irregular shaped window
     POINT pt = { 0, 0 };
