@@ -250,11 +250,13 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            ++count;
+
             if (!m_full && pChild != pLevel3) continue;
 
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel3);
+            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count-1, line_color, line_thickness, pChild == pLevel3);
 
             // render text label
             screenint label_x = origin_x + (radius - thickness_level2 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
@@ -273,11 +275,12 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            ++count;
             if (!m_full && pChild != pLevel2) continue;
 
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + startAngle_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel2);
+            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count-1, line_color, line_thickness, pChild == pLevel2);
 
             // render text label
             screenint label_x = origin_x + (radius - thickness_level1 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
@@ -410,11 +413,12 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            ++count;
             if (!m_full && pChild != pLevel3) continue;
 
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel3);
+            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count-1, line_color, line_thickness, pChild == pLevel3);
 
             // render text label
             screenint label_x = origin_x + (radius - thickness_level2 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
@@ -433,11 +437,12 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            ++count;
             if (!m_full && pChild != pLevel2) continue;
 
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel2);
+            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count-1, line_color, line_thickness, pChild == pLevel2);
 
             // render text label
             screenint label_x = origin_x + (radius - thickness_level1 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
@@ -569,11 +574,12 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel3->Lbnd() + pLevel3->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel2->GetChildren().begin(), E = pLevel2->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            ++count;
             if (!m_full && pChild != pLevel3) continue;
 
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel3);
+            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count-1, line_color, line_thickness, pChild == pLevel3);
 
             // render text label
             screenint label_x = origin_x + (radius - thickness_level2 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
@@ -592,11 +598,12 @@ CDasherNode* CDasherViewDial::RenderWithMode(CDasherNode *pRoot, myint iRootMin,
         offset = CDasherModel::NORMALIZATION - (pLevel2->Lbnd() + pLevel2->Hbnd()) / 2;
         for (CDasherNode::ChildMap::const_iterator I = pLevel1->GetChildren().begin(), E = pLevel1->GetChildren().end(); I != E; ++I) {
             CDasherNode *pChild = *I;
+            ++count;
             if (!m_full && pChild != pLevel2) continue;
 
             double startAngle = (pChild->Lbnd() + offset) * 360.0 / CDasherModel::NORMALIZATION + pointer_offset;
             double sweepAngle = (pChild->Hbnd() - pChild->Lbnd()) * 360.0 / CDasherModel::NORMALIZATION;
-            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count++, line_color, line_thickness, pChild == pLevel2);
+            Screen()->DrawSolidArc(origin_x, origin_y, radius, startAngle, sweepAngle, count-1, line_color, line_thickness, pChild == pLevel2);
 
             // render text label
             screenint label_x = origin_x + (radius - thickness_level1 / 2) * cos((startAngle + sweepAngle / 2) * PI / 180);
